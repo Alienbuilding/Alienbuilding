@@ -470,6 +470,83 @@
     .portfolio-card { width: 340px; height: 214px; }
     .cta-inner { padding: 2.5rem 1.5rem; }
   }
+
+  /* ===================== MOBILE MENU ===================== */
+  .hamburger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 38px; height: 38px;
+    background: none;
+    border: 1px solid var(--steel);
+    cursor: pointer;
+    padding: 8px 7px;
+    z-index: 200;
+    flex-shrink: 0;
+  }
+  .hamburger-btn span {
+    display: block;
+    width: 100%; height: 1.5px;
+    background: var(--silver);
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .hamburger-btn.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  #mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(5,5,7,0.97);
+    backdrop-filter: blur(24px);
+    z-index: 150;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #mobile-menu.open {
+    display: flex;
+    opacity: 1;
+  }
+  #mobile-menu a {
+    text-decoration: none;
+    color: var(--silver);
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    padding: 0.5rem 1.2rem;
+  }
+  #mobile-menu a:hover, #mobile-menu a:active { color: var(--green); }
+  #mobile-menu .mob-cta {
+    border: 1px solid var(--green-dim);
+    color: var(--green) !important;
+    padding: 0.7rem 2rem;
+    margin-top: 0.5rem;
+  }
+  #mobile-menu .mob-close {
+    position: absolute;
+    top: 1.2rem; right: 1.5rem;
+    background: none; border: none;
+    color: var(--silver); font-size: 1.6rem;
+    cursor: pointer; line-height: 1;
+  }
+
+  @media (max-width: 768px) {
+    .hamburger-btn { display: flex; }
+  }
+
+  /* ===================== STRIP DRAG CURSOR ===================== */
+  .strip-wrapper { cursor: grab; }
+  .strip-wrapper.dragging { cursor: grabbing; }
 </style>
 </head>
 <body>
@@ -698,7 +775,19 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
     <li><a href="#clients">Clients</a></li>
     <li><a href="#cta" class="nav-cta">Contact</a></li>
   </ul>
+  <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU OVERLAY -->
+<div id="mobile-menu" role="dialog" aria-modal="true">
+  <button class="mob-close" id="mob-close-btn" aria-label="Close menu">&#x2715;</button>
+  <a href="#portfolio" class="mob-link">Portfolio</a>
+  <a href="#services" class="mob-link">Services</a>
+  <a href="#clients" class="mob-link">Clients</a>
+  <a href="#cta" class="mob-link mob-cta">Contact</a>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -1083,9 +1172,11 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
    - Subtle green nebula wisps
 ================================================================ */
 const canvas = document.getElementById('universe-canvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', { willReadFrequently: false, alpha: true });
 let W, H, scrollY = 0, t = 0;
 let stars = [], nebulae = [], galaxies = [], blackHoles = [], shooters = [];
+let lastFrameTime = 0;
+const FRAME_INTERVAL = 1000 / 40; // cap at 40fps for canvas
 
 function rand(a, b) { return a + Math.random() * (b - a); }
 function randInt(a, b) { return Math.floor(rand(a, b)); }
@@ -1098,7 +1189,7 @@ function resize() {
 /* ---- STARS ---- */
 function initStars() {
   stars = [];
-  const n = Math.floor(W * H / 2000);
+  const n = Math.floor(W * H / 5000); // reduced for perf
   // Cold palette: pure whites, cool grays, faint blue-whites, rare green tint
   const palette = [
     '#FFFFFF','#F4F4F8','#E0E0EE','#C8C8D8',
@@ -1158,7 +1249,7 @@ function initGalaxies() {
       rotSpeed:  rand(0.00004, 0.00014) * (Math.random() > 0.5 ? 1 : -1),
       coreR:     rand(7, 18),
       outerR:    rand(50, 115),
-      starCount: randInt(120, 260),
+      starCount: randInt(60, 120),
       tilt:      rand(0.18, 0.82),
       rC: greenTint ? [80, 180, 110] : [180, 182, 200],
       parallax:  rand(0.02, 0.07),
@@ -1329,8 +1420,11 @@ function spawnShooter() {
 }
 
 /* ---- MAIN LOOP ---- */
-function draw() {
-  t += 0.016;
+function draw(now) {
+  requestAnimationFrame(draw);
+  if (now - lastFrameTime < FRAME_INTERVAL) return;
+  lastFrameTime = now;
+  t += 0.025;
   ctx.clearRect(0, 0, W, H);
 
   // Deep space background — pure blacks and near-blacks
@@ -1390,13 +1484,12 @@ function draw() {
     ctx.stroke();
   });
 
-  requestAnimationFrame(draw);
 }
 
 window.addEventListener('resize', () => { resize(); initStars(); initNebulae(); initGalaxies(); initBlackHoles(); });
-window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
 resize(); initStars(); initNebulae(); initGalaxies(); initBlackHoles();
-draw();
+requestAnimationFrame(draw);
 
 /* ================================================================
    PORTFOLIO STRIPS
@@ -1468,15 +1561,50 @@ populateStrip('strip-2', 1);
 populateStrip('strip-3', 2);
 
 let stripOffsets = [0, 0, 0];
-const scrollSpeeds = [1.5, -1.7, 1.3];
-const driftSpeeds  = [-0.30, 0.36, -0.26];
+const scrollSpeeds = [3.0, -3.4, 2.6];
+const driftSpeeds  = [-0.7, 0.8, -0.6];
 let lastScrollY = 0;
+
+/* ---- Strip drag state ---- */
+const stripDragState = [
+  { dragging: false, startX: 0, startOffset: 0 },
+  { dragging: false, startX: 0, startOffset: 0 },
+  { dragging: false, startX: 0, startOffset: 0 },
+];
+
+function setupStripDrag(idx) {
+  const wrapper = document.querySelectorAll('.strip-wrapper')[idx];
+  if (!wrapper) return;
+  const ds = stripDragState[idx];
+
+  function getClientX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+
+  wrapper.addEventListener('mousedown',  e => { ds.dragging = true; ds.startX = getClientX(e); ds.startOffset = stripOffsets[idx]; wrapper.classList.add('dragging'); }, { passive: true });
+  wrapper.addEventListener('touchstart', e => { ds.dragging = true; ds.startX = getClientX(e); ds.startOffset = stripOffsets[idx]; }, { passive: true });
+
+  window.addEventListener('mousemove', e => {
+    if (!ds.dragging) return;
+    stripOffsets[idx] = ds.startOffset + (getClientX(e) - ds.startX);
+  }, { passive: true });
+  window.addEventListener('touchmove', e => {
+    if (!ds.dragging) return;
+    stripOffsets[idx] = ds.startOffset + (getClientX(e) - ds.startX);
+  }, { passive: true });
+
+  function endDrag() { ds.dragging = false; wrapper.classList.remove('dragging'); }
+  window.addEventListener('mouseup', endDrag);
+  window.addEventListener('touchend', endDrag);
+}
+
+setupStripDrag(0); setupStripDrag(1); setupStripDrag(2);
 
 function animateStrips() {
   const delta = window.scrollY - lastScrollY;
   lastScrollY = window.scrollY;
   for (let i = 0; i < 3; i++) {
-    stripOffsets[i] += delta * scrollSpeeds[i] + driftSpeeds[i];
+    if (!stripDragState[i].dragging) {
+      stripOffsets[i] += delta * scrollSpeeds[i] + driftSpeeds[i];
+    }
     const strip = document.getElementById(`strip-${i+1}`);
     if (!strip) continue;
     const totalW = strip.scrollWidth / 2;
@@ -1513,12 +1641,12 @@ const cntObs = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 
-/* ---- Portfolio card hover image cycling ---- */
+/* ---- Portfolio card AUTO image cycling every 3s (pause on hover) ---- */
 (function() {
   function initCardCycle(card) {
     const layers = card.querySelectorAll('.card-img-layer');
-    if (!layers.length) return;
-    let idx = 0, timer = null;
+    if (layers.length < 2) return;
+    let idx = 0, timer = null, paused = false;
 
     function showNext() {
       layers[idx].classList.remove('active');
@@ -1526,16 +1654,15 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
       layers[idx].classList.add('active');
     }
 
-    card.addEventListener('mouseenter', () => {
-      if (layers.length < 2) return;
-      timer = setInterval(showNext, 1800);
-    });
-    card.addEventListener('mouseleave', () => {
-      clearInterval(timer);
-      // smoothly reset to first image
-      layers.forEach((l, i) => l.classList.toggle('active', i === 0));
-      idx = 0;
-    });
+    function startCycle() {
+      if (timer) return;
+      timer = setInterval(() => { if (!paused) showNext(); }, 3000);
+    }
+
+    card.addEventListener('mouseenter', () => { paused = true; });
+    card.addEventListener('mouseleave', () => { paused = false; });
+
+    startCycle();
   }
 
   // Observe DOM for dynamically built cards
@@ -1552,6 +1679,29 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     card.setAttribute('data-cycle', '1');
     initCardCycle(card);
   });
+})();
+
+/* ---- Mobile Menu ---- */
+(function() {
+  const btn     = document.getElementById('hamburger-btn');
+  const menu    = document.getElementById('mobile-menu');
+  const closeBtn = document.getElementById('mob-close-btn');
+  const links   = menu.querySelectorAll('.mob-link');
+
+  function openMenu() {
+    menu.classList.add('open');
+    btn.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  btn.addEventListener('click', () => menu.classList.contains('open') ? closeMenu() : openMenu());
+  closeBtn.addEventListener('click', closeMenu);
+  links.forEach(link => link.addEventListener('click', closeMenu));
 })();
 </script>
 </body>
