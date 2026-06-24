@@ -1436,14 +1436,21 @@ function buildCard(item) {
   const layers = imgs.map((src, i) =>
     `<div class="card-img-layer${i === 0 ? ' active' : ''}" style="background-image:url('${src}')"></div>`
   ).join('');
+
+  // Conditionally render the placeholder icon and label 
+  // only if an icon is provided (which means there are no images)
+  const placeholderContent = item.icon ? `
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0.6rem">
+      <span style="font-size:2.1rem;opacity:0.55;filter:grayscale(0.6)">${item.icon}</span>
+      <span style="font-family: 'Syne', sans-serif;font-size:0.56rem;letter-spacing:0.16em;color:rgba(168,168,184,0.5);text-transform:uppercase;padding:0 1rem;text-align:center;line-height:1.6">${item.label}</span>
+    </div>
+  ` : '';
+
   return `
     <div class="portfolio-card">
       <div class="card-placeholder" style="background:${item.g}">
         ${layers}
-        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0.6rem">
-          <span style="font-size:2.1rem;opacity:0.55;filter:grayscale(0.6)">${item.icon}</span>
-          <span style="font-family: 'Syne', sans-serif;font-size:0.56rem;letter-spacing:0.16em;color:rgba(168,168,184,0.5);text-transform:uppercase;padding:0 1rem;text-align:center;line-height:1.6">${item.label}</span>
-        </div>
+        ${placeholderContent}
       </div>
       <div class="card-overlay">
         <div class="card-label">${item.label}</div>
