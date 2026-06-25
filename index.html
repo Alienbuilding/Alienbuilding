@@ -1750,9 +1750,7 @@ populateStrip('strip-2', 1);
 populateStrip('strip-3', 2);
 
 let stripOffsets = [0, 0, 0];
-const scrollSpeeds = [3.0, -3.4, 2.6];
 const driftSpeeds  = [-0.7, 0.8, -0.6];
-let lastScrollY = 0;
 
 /* ---- Strip drag state ---- */
 const stripDragState = [
@@ -1828,9 +1826,8 @@ const cntObs = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 
-/* ---- Portfolio card image cycling — ONE random card every 4s ---- */
+/* ---- Portfolio card image cycling — each card independently every 5-7s ---- */
 (function() {
-  const registry = []; // { layers, idx, hovered }
 
   function registerCard(card) {
     const layers = Array.from(card.querySelectorAll('.card-img-layer'));
@@ -1841,27 +1838,23 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     layers.forEach((l, i) => l.classList.toggle('active', i === startIdx));
 
     const entry = { layers, idx: startIdx, hovered: false };
-    registry.push(entry);
 
     card.addEventListener('mouseenter', () => { entry.hovered = true; });
     card.addEventListener('mouseleave', () => { entry.hovered = false; });
+
+    // Each card gets its own independent random timer (5-7s), with a random
+    // initial offset up to 5s so cards don't all fire at the same time on load
+    const initialDelay = Math.random() * 5000;
+    setTimeout(function tick() {
+      if (!entry.hovered) {
+        entry.layers[entry.idx].classList.remove('active');
+        entry.idx = (entry.idx + 1) % entry.layers.length;
+        entry.layers[entry.idx].classList.add('active');
+      }
+      // Re-schedule with a fresh random interval
+      setTimeout(tick, 5000 + Math.random() * 2000);
+    }, initialDelay);
   }
-
-  function tickRandom() {
-    const available = registry.filter(e => !e.hovered && e.layers.length >= 2);
-    if (!available.length) return;
-
-    // Pick one card at random
-    const entry = available[Math.floor(Math.random() * available.length)];
-
-    // Move to next image
-    entry.layers[entry.idx].classList.remove('active');
-    entry.idx = (entry.idx + 1) % entry.layers.length;
-    entry.layers[entry.idx].classList.add('active');
-  }
-
-  // Single global timer — only ONE card changes every 4 seconds
-  setInterval(tickRandom, 4000);
 
   // Watch for cards added dynamically by strip population
   const mo = new MutationObserver(() => {
