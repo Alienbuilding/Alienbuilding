@@ -1788,11 +1788,9 @@ function setupStripDrag(idx) {
 setupStripDrag(0); setupStripDrag(1); setupStripDrag(2);
 
 function animateStrips() {
-  const delta = window.scrollY - lastScrollY;
-  lastScrollY = window.scrollY;
   for (let i = 0; i < 3; i++) {
     if (!stripDragState[i].dragging) {
-      stripOffsets[i] += delta * scrollSpeeds[i] + driftSpeeds[i];
+      stripOffsets[i] += driftSpeeds[i];
     }
     const strip = document.getElementById(`strip-${i+1}`);
     if (!strip) continue;
@@ -1830,16 +1828,15 @@ const cntObs = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 
-/* ---- Portfolio card image cycling — RANDOM, ONE AT A TIME, every 5s ---- */
+/* ---- Portfolio card image cycling — ONE random card every 4s ---- */
 (function() {
-  // Registry: each entry = { layers: NodeList, idx: number, hovered: bool }
-  const registry = [];
+  const registry = []; // { layers, idx, hovered }
 
   function registerCard(card) {
-    const layers = card.querySelectorAll('.card-img-layer');
+    const layers = Array.from(card.querySelectorAll('.card-img-layer'));
     if (layers.length < 2) return;
 
-    // Start each card on a random image so they're already out of sync
+    // Stagger start: each card begins on a different image
     const startIdx = Math.floor(Math.random() * layers.length);
     layers.forEach((l, i) => l.classList.toggle('active', i === startIdx));
 
@@ -1851,23 +1848,22 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
   }
 
   function tickRandom() {
-    // Pick only cards that are NOT hovered
-    const available = registry.filter(e => !e.hovered);
-    if (available.length === 0) return;
+    const available = registry.filter(e => !e.hovered && e.layers.length >= 2);
+    if (!available.length) return;
 
-    // Pick one at random
+    // Pick one card at random
     const entry = available[Math.floor(Math.random() * available.length)];
 
-    // Advance to next image
+    // Move to next image
     entry.layers[entry.idx].classList.remove('active');
     entry.idx = (entry.idx + 1) % entry.layers.length;
     entry.layers[entry.idx].classList.add('active');
   }
 
-  // One global timer — fires every 5s, updates exactly ONE random card
-  setInterval(tickRandom, 5000);
+  // Single global timer — only ONE card changes every 4 seconds
+  setInterval(tickRandom, 4000);
 
-  // Observe DOM for dynamically built cards (strips clone nodes)
+  // Watch for cards added dynamically by strip population
   const mo = new MutationObserver(() => {
     document.querySelectorAll('.portfolio-card:not([data-cycle])').forEach(card => {
       card.setAttribute('data-cycle', '1');
@@ -1876,7 +1872,7 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
   });
   mo.observe(document.body, { childList: true, subtree: true });
 
-  // Init cards already in DOM
+  // Init cards already in DOM at load time
   document.querySelectorAll('.portfolio-card').forEach(card => {
     card.setAttribute('data-cycle', '1');
     registerCard(card);
