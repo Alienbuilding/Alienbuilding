@@ -1830,43 +1830,56 @@ const cntObs = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 
-/* ---- Portfolio card AUTO image cycling every 3s (pause on hover) ---- */
+/* ---- Portfolio card image cycling — RANDOM, ONE AT A TIME, every 5s ---- */
 (function() {
-  function initCardCycle(card) {
+  // Registry: each entry = { layers: NodeList, idx: number, hovered: bool }
+  const registry = [];
+
+  function registerCard(card) {
     const layers = card.querySelectorAll('.card-img-layer');
     if (layers.length < 2) return;
-    let idx = 0, timer = null, paused = false;
 
-    function showNext() {
-      layers[idx].classList.remove('active');
-      idx = (idx + 1) % layers.length;
-      layers[idx].classList.add('active');
-    }
+    // Start each card on a random image so they're already out of sync
+    const startIdx = Math.floor(Math.random() * layers.length);
+    layers.forEach((l, i) => l.classList.toggle('active', i === startIdx));
 
-    function startCycle() {
-      if (timer) return;
-      timer = setInterval(() => { if (!paused) showNext(); }, 3000);
-    }
+    const entry = { layers, idx: startIdx, hovered: false };
+    registry.push(entry);
 
-    card.addEventListener('mouseenter', () => { paused = true; });
-    card.addEventListener('mouseleave', () => { paused = false; });
-
-    startCycle();
+    card.addEventListener('mouseenter', () => { entry.hovered = true; });
+    card.addEventListener('mouseleave', () => { entry.hovered = false; });
   }
 
-  // Observe DOM for dynamically built cards
+  function tickRandom() {
+    // Pick only cards that are NOT hovered
+    const available = registry.filter(e => !e.hovered);
+    if (available.length === 0) return;
+
+    // Pick one at random
+    const entry = available[Math.floor(Math.random() * available.length)];
+
+    // Advance to next image
+    entry.layers[entry.idx].classList.remove('active');
+    entry.idx = (entry.idx + 1) % entry.layers.length;
+    entry.layers[entry.idx].classList.add('active');
+  }
+
+  // One global timer — fires every 5s, updates exactly ONE random card
+  setInterval(tickRandom, 5000);
+
+  // Observe DOM for dynamically built cards (strips clone nodes)
   const mo = new MutationObserver(() => {
     document.querySelectorAll('.portfolio-card:not([data-cycle])').forEach(card => {
       card.setAttribute('data-cycle', '1');
-      initCardCycle(card);
+      registerCard(card);
     });
   });
   mo.observe(document.body, { childList: true, subtree: true });
 
-  // Also init any already-present cards
+  // Init cards already in DOM
   document.querySelectorAll('.portfolio-card').forEach(card => {
     card.setAttribute('data-cycle', '1');
-    initCardCycle(card);
+    registerCard(card);
   });
 })();
 
