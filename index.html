@@ -1892,8 +1892,14 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 
   btn.addEventListener('click', () => menu.classList.contains('open') ? closeMenu() : openMenu());
   closeBtn.addEventListener('click', closeMenu);
-  links.forEach(link => link.addEventListener('click', closeMenu));
+   links.forEach(link => link.addEventListener('click', closeMenu));
 })();
 </script>
+
+<script>
+  window.ALIEN_CHAT_URL = 'https://alien-building-chat-production.up.railway.app';
+</script>
+<script src="chat-widget.js"></script>
+
 </body>
 </html>
