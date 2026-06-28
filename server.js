@@ -5,15 +5,15 @@ const Anthropic = require('@anthropic-ai/sdk');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ extended: false, limit: '20mb' }));
 
 // ── CREDENTIALS ──────────────────────────────────────────────
 const TWILIO_SID        = process.env.TWILIO_SID;
 const TWILIO_TOKEN      = process.env.TWILIO_TOKEN;
 const TWILIO_NUMBER     = process.env.TWILIO_NUMBER;   // +18456134389
 const ANTHROPIC_KEY     = process.env.ANTHROPIC_KEY;
-const JOHN_WHATSAPP     = process.env.JOHN_WHATSAPP;   // 
+const JOHN_WHATSAPP     = process.env.JOHN_WHATSAPP;   // whatsapp:+5538984267699
 
 const twilioClient = twilio(TWILIO_SID, TWILIO_TOKEN);
 const anthropic    = new Anthropic({ apiKey: ANTHROPIC_KEY });
@@ -23,25 +23,35 @@ const anthropic    = new Anthropic({ apiKey: ANTHROPIC_KEY });
 const sessions = {};
 
 // ── AI SYSTEM PROMPT ──────────────────────────────────────────
-const SYSTEM_PROMPT = `You are Alex, a friendly and professional assistant for Alien Building Studio — a high-end architecture and engineering firm founded by John.
+const SYSTEM_PROMPT = `You are Alex, a friendly and professional assistant for Alien Building Studio — a high-end architecture and engineering firm founded by John, specializing in 3D visualization, CAD/BIM, engineering, and interior design.
 
-Your job is to warmly welcome visitors and qualify them as leads by naturally collecting this information during the conversation:
+Your job is to warmly welcome visitors, help them with their questions, and qualify them as leads by naturally collecting this information:
 1. Their name
-2. Type of project (residential, commercial, interior design, 3D rendering, CAD/BIM, other)
+2. Type of project (residential, commercial, interior design, 3D rendering, CAD/BIM, DWG drafting, other)
 3. Budget range (under $5k, $5k-$15k, $15k-$50k, $50k+)
 4. Project location (city, state)
 5. Timeline (ASAP, 1-3 months, 3-6 months, 6+ months)
 6. Best way to reach them (email or WhatsApp number)
 
+If a client shares an image or reference photo:
+- Describe what you see briefly and enthusiastically
+- Ask how you can help with that type of project
+- Use it as a natural opening to qualify them
+
+If they ask about specific services like DWG files, CAD drawings, 3D renders, BIM models, or any technical request:
+- Confirm that Alien Building Studio handles that type of work
+- Express genuine interest in their project
+- Steer toward collecting their details so John can follow up personally with specifics
+
 Rules:
-- Be warm, professional and concise — this is a chat widget, keep responses short (2-3 sentences max)
+- Be warm, professional and concise — keep responses short (2-3 sentences max)
 - Ask ONE question at a time, naturally woven into conversation
 - Never sound like a form or a robot
-- Once you have all 6 pieces of info, tell them: "Perfect! I'm passing your details to John right now. He'll reach out to you shortly. Is there anything else you'd like to add?"
-- After they respond to that, output ONLY this exact tag on a new line: [LEAD_READY]
+- Once you have all 6 pieces of info, say: "Perfect! I'm passing your details to John right now. He'll reach out to you shortly. Is there anything else you'd like to add?"
+- After they respond, output ONLY this exact tag on a new line: [LEAD_READY]
 - Never reveal you are an AI unless directly asked
-- Never discuss pricing specifics — just say John will go over all details personally
-- Always stay focused on architecture/design topics`;
+- Never give specific pricing — say John will discuss all details personally
+- Always keep the conversation moving toward getting their contact info`;
 
 // ── HELPER: extract lead data from conversation ───────────────
 function extractLead(history) {
@@ -91,20 +101,8 @@ app.post('/chat', async (req, res) => {
 
     const session = sessions[sessionId];
 
-    // Build content — text + optional images
-    const userContent = [];
-    if (req.body.images && req.body.images.length > 0) {
-      req.body.images.forEach(img => {
-        userContent.push({
-          type: 'image',
-          source: { type: 'base64', media_type: img.mimeType, data: img.base64 }
-        });
-      });
-    }
-    userContent.push({ type: 'text', text: message });
-
-    // Add user message to history (text only for history, images are per-turn)
-    session.history.push({ role: 'user', content: userContent });
+    // Add user message to history
+    session.history.push({ role: 'user', content: message });
 
     // Call Claude
     const response = await anthropic.messages.create({
@@ -120,11 +118,8 @@ app.post('/chat', async (req, res) => {
     const leadReady = aiText.includes('[LEAD_READY]');
     const cleanResponse = aiText.replace('[LEAD_READY]', '').trim();
 
-    // Store assistant reply as text only
-    session.history.push({ role: 'assistant', content: [{ type: 'text', text: cleanResponse }] });
-
-    // Trim history to last 20 turns to avoid token overflow
-    if (session.history.length > 20) session.history = session.history.slice(-20);
+    // Add AI response to history
+    session.history.push({ role: 'assistant', content: cleanResponse });
 
     // If lead is ready and not yet notified — send to John's WhatsApp
     if (leadReady && !session.qualified) {
@@ -144,7 +139,7 @@ app.post('/chat', async (req, res) => {
 app.post('/whatsapp-reply', async (req, res) => {
   try {
     const incomingMsg = req.body.Body;
-    const from        = req.body.From; // whatsapp:
+    const from        = req.body.From; // whatsapp:+5538984267699
 
     // Only accept messages from John
     if (from !== JOHN_WHATSAPP) {

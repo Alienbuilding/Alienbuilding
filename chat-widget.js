@@ -9,7 +9,7 @@
   const BACKEND_URL = window.ALIEN_CHAT_URL || 'https://YOUR-RAILWAY-URL.up.railway.app';
   const AGENT_NAME  = 'Alex';
   const AGENT_ROLE  = 'Alien Building Assistant';
-  const OPEN_DELAY  = 4000; // auto-open after 4 seconds
+  // Auto-open disabled — widget stays closed until user clicks
 
   // ── SESSION ID ────────────────────────────────────────────────
   let sessionId = localStorage.getItem('ab_session');
@@ -307,13 +307,7 @@
   bubble.addEventListener('click', () => isOpen ? closeChat() : openChat());
   closeBtn.addEventListener('click', closeChat);
 
-  // Auto open after delay (once only)
-  setTimeout(() => {
-    if (!hasAutoOpened && !isOpen) {
-      hasAutoOpened = true;
-      openChat();
-    }
-  }, OPEN_DELAY);
+  // Widget stays closed until user clicks the bubble
 
   // ── SEND MESSAGE ──────────────────────────────────────────────
   async function sendMessage() {
