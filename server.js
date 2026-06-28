@@ -13,7 +13,7 @@ const TWILIO_SID        = process.env.TWILIO_SID;
 const TWILIO_TOKEN      = process.env.TWILIO_TOKEN;
 const TWILIO_NUMBER     = process.env.TWILIO_NUMBER;   // +18456134389
 const ANTHROPIC_KEY     = process.env.ANTHROPIC_KEY;
-const JOHN_WHATSAPP     = process.env.JOHN_WHATSAPP;   // whatsapp:+5538984267699
+const JOHN_WHATSAPP     = process.env.JOHN_WHATSAPP;   // 
 
 const twilioClient = twilio(TWILIO_SID, TWILIO_TOKEN);
 const anthropic    = new Anthropic({ apiKey: ANTHROPIC_KEY });
@@ -144,7 +144,7 @@ app.post('/chat', async (req, res) => {
 app.post('/whatsapp-reply', async (req, res) => {
   try {
     const incomingMsg = req.body.Body;
-    const from        = req.body.From; // whatsapp:+5538984267699
+    const from        = req.body.From; // whatsapp:
 
     // Only accept messages from John
     if (from !== JOHN_WHATSAPP) {
