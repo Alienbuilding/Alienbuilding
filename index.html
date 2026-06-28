@@ -169,10 +169,10 @@
   .btn-outline:hover { border-color: var(--green-dim); color: var(--green); }
 
   .scroll-hint {
-    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
     display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
     opacity: 0;
     animation: fadeUp 1s 1.3s forwards;
+    margin-top: 2.5rem;
   }
   .scroll-hint span {
     font-size: 0.52rem; letter-spacing: 0.26em; text-transform: uppercase;
@@ -1036,7 +1036,7 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
     <li><a href="#services">Services</a></li>
     <li><a href="#clients">Clients</a></li>
     <li><a href="#meet">About</a></li>
-    <li><a href="#ai-chat" class="nav-cta">Contact</a></li>
+    <li><a href="#hero-chat" class="nav-cta">Contact</a></li>
   </ul>
   <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -1050,7 +1050,7 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   <a href="#services" class="mob-link">Services</a>
   <a href="#clients" class="mob-link">Clients</a>
   <a href="#meet" class="mob-link">About</a>
-  <a href="#ai-chat" class="mob-link mob-cta">Contact</a>
+  <a href="#hero-chat" class="mob-link mob-cta">Contact</a>
 </div>
 
 <!-- HERO -->
@@ -1272,7 +1272,7 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   </p>
   <div class="hero-btns">
     <a href="#portfolio" class="btn-primary">Explore Portfolio</a>
-    <a href="#hero-chat" class="btn-outline">Start a Conversation</a>
+    <a href="#hero-chat" class="btn-primary" id="btn-start-chat">Start a Conversation</a>
   </div>
   <div class="scroll-hint">
     <span>Scroll to explore</span>
@@ -2017,132 +2017,6 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
   });
 })();
 
-/* ---- Inline AI Chat Panel ---- */
-(function() {
-  const BACKEND = window.ALIEN_CHAT_URL || 'https://alien-building-chat-production.up.railway.app';
-  let sessionId = localStorage.getItem('ab_session_inline');
-  if (!sessionId) {
-    sessionId = 'abi_' + Math.random().toString(36).slice(2) + Date.now();
-    localStorage.setItem('ab_session_inline', sessionId);
-  }
-
-  const messagesEl  = document.getElementById('aichat-messages');
-  const inputEl     = document.getElementById('aichat-input');
-  const sendBtn     = document.getElementById('aichat-send');
-  const fileInput   = document.getElementById('aichat-file-input');
-  const previewsEl  = document.getElementById('aichat-previews');
-
-  let pendingImages = []; // [{base64, mimeType, previewUrl}]
-  let isBusy = false;
-
-  // Auto-resize textarea
-  inputEl.addEventListener('input', () => {
-    inputEl.style.height = 'auto';
-    inputEl.style.height = Math.min(inputEl.scrollHeight, 100) + 'px';
-  });
-
-  // Image file handling
-  fileInput.addEventListener('change', () => {
-    Array.from(fileInput.files).forEach(file => {
-      if (!file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        const dataUrl = e.target.result;
-        const base64  = dataUrl.split(',')[1];
-        const mime    = file.type;
-        pendingImages.push({ base64, mimeType: mime, previewUrl: dataUrl });
-        renderPreviews();
-      };
-      reader.readAsDataURL(file);
-    });
-    fileInput.value = '';
-  });
-
-  function renderPreviews() {
-    previewsEl.innerHTML = '';
-    pendingImages.forEach((img, i) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'aichat-preview-wrap';
-      wrap.innerHTML = `
-        <img src="${img.previewUrl}" class="aichat-preview-img" alt="attachment">
-        <button class="aichat-preview-remove" data-i="${i}">✕</button>`;
-      previewsEl.appendChild(wrap);
-    });
-    previewsEl.querySelectorAll('.aichat-preview-remove').forEach(btn => {
-      btn.addEventListener('click', () => {
-        pendingImages.splice(parseInt(btn.dataset.i), 1);
-        renderPreviews();
-      });
-    });
-  }
-
-  function addMsg(text, role) {
-    // Remove typing indicator
-    const typing = messagesEl.querySelector('.aichat-typing');
-    if (typing) typing.remove();
-    const div = document.createElement('div');
-    div.className = `aichat-msg ${role}`;
-    div.textContent = text;
-    messagesEl.appendChild(div);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-  }
-
-  function addImageMsg(previewUrl) {
-    const div = document.createElement('div');
-    div.className = 'aichat-msg user';
-    div.innerHTML = `<img src="${previewUrl}" style="max-width:120px;max-height:90px;display:block;border:1px solid rgba(61,186,111,0.3);" alt="Your image">`;
-    messagesEl.appendChild(div);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-  }
-
-  function showTyping() {
-    const t = document.createElement('div');
-    t.className = 'aichat-typing';
-    t.innerHTML = '<span></span><span></span><span></span>';
-    messagesEl.appendChild(t);
-    messagesEl.scrollTop = messagesEl.scrollHeight;
-  }
-
-  async function sendMessage() {
-    const text = inputEl.value.trim();
-    if (isBusy || (!text && pendingImages.length === 0)) return;
-    isBusy = true;
-
-    // Show user message
-    if (text) addMsg(text, 'user');
-    pendingImages.forEach(img => addImageMsg(img.previewUrl));
-
-    const imagesToSend = [...pendingImages];
-    pendingImages = [];
-    renderPreviews();
-    inputEl.value = '';
-    inputEl.style.height = 'auto';
-
-    showTyping();
-
-    try {
-      const res = await fetch(`${BACKEND}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId,
-          message: text || '(Sent project images)',
-          images: imagesToSend.map(i => ({ base64: i.base64, mimeType: i.mimeType }))
-        })
-      });
-      const data = await res.json();
-      addMsg(data.reply || "Sorry, couldn't process that. Please try again.", 'agent');
-    } catch {
-      addMsg("Connection error — please try again in a moment.", 'agent');
-    }
-    isBusy = false;
-  }
-
-  sendBtn.addEventListener('click', sendMessage);
-  inputEl.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  });
-})();
 
 /* ---- Mobile Menu ---- */
 (function() {
@@ -2248,6 +2122,25 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
   });
   chips.forEach(c => c.addEventListener('click', () => send(c.getAttribute('data-msg'))));
+
+  // Focus input when "Start a Conversation" button is clicked
+  const startBtn = document.getElementById('btn-start-chat');
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      setTimeout(() => {
+        const input = document.getElementById('hchat-input');
+        if (input) {
+          input.focus();
+          // Highlight the card border to signal it's active
+          const card = input.closest('.hchat-card');
+          if (card) {
+            card.style.borderColor = 'rgba(61,186,111,0.6)';
+            card.style.boxShadow = '0 0 0 3px rgba(61,186,111,0.08)';
+          }
+        }
+      }, 600); // wait for scroll to finish
+    });
+  }
 
   function startPolling() {
     if (pollInterval) return;
