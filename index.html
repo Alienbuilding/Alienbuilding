@@ -10,6 +10,23 @@
 
   gtag('config', 'AW-18280246171');
 </script>
+<!-- Event snippet for Submit lead form conversion page -->
+<script>
+function gtag_report_conversion(url) {
+  var callback = function () {
+    if (typeof(url) != 'undefined') {
+      window.location = url;
+    }
+  };
+  gtag('event', 'conversion', {
+      'send_to': 'AW-18280246171/jJSWCInRi8ccEJvX2YxE',
+      'value': 1.0,
+      'currency': 'USD',
+      'event_callback': callback
+  });
+  return false;
+}
+</script>
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="shortcut icon" type="image/svg+xml" href="favicon.svg">
@@ -2099,6 +2116,7 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     if (!text || isTyping) return;
     showThread();
     addBubble(text, 'user');
+    gtag_report_conversion();
     isTyping = true; showTyping();
     try {
       const res  = await fetch(BACKEND_URL + '/chat', {
