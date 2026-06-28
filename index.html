@@ -1272,7 +1272,7 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   </p>
   <div class="hero-btns">
     <a href="#portfolio" class="btn-primary">Explore Portfolio</a>
-    <a href="#hero-chat" class="btn-primary" id="btn-start-chat">Start a Conversation</a>
+    <a href="javascript:void(0)" class="btn-primary" id="btn-start-chat">Start a Conversation</a>
   </div>
   <div class="scroll-hint">
     <span>Scroll to explore</span>
@@ -2123,22 +2123,24 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
   });
   chips.forEach(c => c.addEventListener('click', () => send(c.getAttribute('data-msg'))));
 
-  // Focus input when "Start a Conversation" button is clicked
+  // "Start a Conversation" — center the chat box in viewport then focus input
   const startBtn = document.getElementById('btn-start-chat');
   if (startBtn) {
-    startBtn.addEventListener('click', () => {
-      setTimeout(() => {
-        const input = document.getElementById('hchat-input');
-        if (input) {
-          input.focus();
-          // Highlight the card border to signal it's active
-          const card = input.closest('.hchat-card');
-          if (card) {
-            card.style.borderColor = 'rgba(61,186,111,0.6)';
-            card.style.boxShadow = '0 0 0 3px rgba(61,186,111,0.08)';
+    startBtn.addEventListener('click', function(e) {
+      e.preventDefault(); // stop default anchor jump
+      const card = document.querySelector('.hchat-card');
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          const input = document.getElementById('hchat-input');
+          if (input) {
+            input.focus();
+            // Flash the border green so client sees the box is active
+            card.style.borderColor = 'rgba(61,186,111,0.65)';
+            card.style.boxShadow   = '0 0 0 4px rgba(61,186,111,0.09)';
           }
-        }
-      }, 600); // wait for scroll to finish
+        }, 600);
+      }
     });
   }
 
