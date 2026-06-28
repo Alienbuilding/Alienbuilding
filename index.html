@@ -559,169 +559,6 @@
   }
 
   /* ===================== FOOTER ===================== */
-  /* ── INLINE AI CHAT SECTION ── */
-  #ai-chat {
-    position: relative; z-index: 1;
-    padding: 7rem 4rem;
-  }
-  .aichat-wrap {
-    max-width: 780px; margin: 0 auto; text-align: center;
-  }
-  .aichat-subtitle {
-    color: var(--ash); font-size: 0.9rem; line-height: 1.8;
-    max-width: 520px; margin: 0 auto 2.5rem;
-  }
-  .aichat-panel {
-    position: relative;
-    background: rgba(13,13,15,0.75);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(61,186,111,0.2);
-    padding: 0;
-    text-align: left;
-    overflow: hidden;
-  }
-  .aichat-corner {
-    position: absolute; width: 20px; height: 20px;
-    z-index: 2; pointer-events: none;
-  }
-  .aichat-tl { top: 0; left: 0; border-top: 1px solid var(--green); border-left: 1px solid var(--green); }
-  .aichat-br { bottom: 0; right: 0; border-bottom: 1px solid var(--green); border-right: 1px solid var(--green); }
-
-  .aichat-agent-bar {
-    display: flex; align-items: center; gap: 0.8rem;
-    padding: 1rem 1.4rem;
-    border-bottom: 1px solid rgba(61,186,111,0.1);
-    background: rgba(255,255,255,0.02);
-  }
-  .aichat-avatar {
-    width: 36px; height: 36px;
-    border: 1px solid rgba(61,186,111,0.4);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    background: rgba(61,186,111,0.06);
-  }
-  .aichat-agent-name {
-    font-family: 'Syne', sans-serif; font-weight: 700;
-    font-size: 0.78rem; letter-spacing: 0.05em; color: var(--white);
-  }
-  .aichat-agent-status {
-    font-size: 0.7rem; color: var(--green);
-    display: flex; align-items: center; gap: 5px; margin-top: 1px;
-  }
-  .aichat-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--green); display: inline-block;
-    animation: pulse-dot 2s infinite;
-  }
-  @keyframes pulse-dot {
-    0%,100% { opacity:1; } 50% { opacity:0.4; }
-  }
-
-  .aichat-messages {
-    min-height: 180px; max-height: 320px;
-    overflow-y: auto; padding: 1.2rem 1.4rem;
-    display: flex; flex-direction: column; gap: 0.8rem;
-    scrollbar-width: thin; scrollbar-color: #222 transparent;
-  }
-  .aichat-messages::-webkit-scrollbar { width: 3px; }
-  .aichat-messages::-webkit-scrollbar-thumb { background: #333; }
-
-  .aichat-msg {
-    max-width: 85%; padding: 0.75rem 1rem;
-    font-size: 0.87rem; line-height: 1.6;
-    word-break: break-word;
-    animation: msg-in 0.2s ease;
-  }
-  @keyframes msg-in { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
-  .aichat-msg.agent {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.07);
-    color: var(--silver); align-self: flex-start;
-  }
-  .aichat-msg.user {
-    background: rgba(61,186,111,0.12);
-    border: 1px solid rgba(61,186,111,0.2);
-    color: #e8f5ee; align-self: flex-end;
-  }
-  .aichat-typing {
-    display: flex; gap: 4px; padding: 0.75rem 1rem;
-    background: rgba(255,255,255,0.05); align-self: flex-start;
-    border: 1px solid rgba(255,255,255,0.07);
-    width: fit-content;
-  }
-  .aichat-typing span {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: var(--green); opacity: 0.4;
-    animation: tdot 1.2s infinite;
-  }
-  .aichat-typing span:nth-child(2) { animation-delay:0.2s; }
-  .aichat-typing span:nth-child(3) { animation-delay:0.4s; }
-  @keyframes tdot { 0%,80%,100%{transform:scale(0.7);opacity:0.4} 40%{transform:scale(1);opacity:1} }
-
-  .aichat-previews {
-    display: flex; flex-wrap: wrap; gap: 0.5rem;
-    padding: 0 1.4rem;
-  }
-  .aichat-preview-img {
-    width: 56px; height: 56px; object-fit: cover;
-    border: 1px solid rgba(61,186,111,0.3);
-    position: relative; cursor: pointer;
-  }
-  .aichat-preview-wrap {
-    position: relative; display: inline-block;
-  }
-  .aichat-preview-remove {
-    position: absolute; top: -5px; right: -5px;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: var(--coral); color: #fff;
-    font-size: 10px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    border: none; line-height: 1;
-  }
-
-  .aichat-input-row {
-    display: flex; align-items: flex-end; gap: 0.6rem;
-    padding: 0.9rem 1.4rem;
-    border-top: 1px solid rgba(61,186,111,0.08);
-    background: rgba(255,255,255,0.02);
-  }
-  .aichat-upload-btn {
-    flex-shrink: 0; width: 38px; height: 38px;
-    border: 1px solid var(--steel); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--silver); transition: color 0.2s, border-color 0.2s;
-  }
-  .aichat-upload-btn:hover { color: var(--green); border-color: var(--green-dim); }
-  .aichat-textarea {
-    flex: 1; background: rgba(255,255,255,0.04);
-    color: var(--white); border: 1px solid #2a2c35;
-    padding: 0.7rem 0.9rem; font-size: 0.87rem;
-    font-family: 'Inter', sans-serif; line-height: 1.5;
-    resize: none; outline: none; max-height: 100px;
-    transition: border-color 0.2s;
-  }
-  .aichat-textarea::placeholder { color: var(--steel); }
-  .aichat-textarea:focus { border-color: rgba(61,186,111,0.4); }
-  .aichat-send-btn {
-    flex-shrink: 0; width: 38px; height: 38px;
-    background: linear-gradient(135deg, #3DBA6F, #2a8a50);
-    border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: opacity 0.2s, transform 0.1s;
-  }
-  .aichat-send-btn:hover { opacity: 0.88; transform: scale(1.05); }
-  .aichat-send-btn:active { transform: scale(0.96); }
-  .aichat-foot {
-    text-align: center; padding: 0.55rem;
-    font-size: 0.62rem; color: #333;
-    border-top: 1px solid #141416; letter-spacing: 0.08em;
-    text-transform: uppercase; font-family: 'Syne', sans-serif;
-  }
-
-  @media (max-width: 768px) {
-    #ai-chat { padding: 4rem 1.5rem; }
-  }
 
   /* ── FOOTER SOCIAL ── */
   .footer-social {
@@ -757,6 +594,116 @@
     transition: color 0.3s;
   }
   .footer-links a:hover { color: var(--green); }
+
+  /* ===================== HERO CHAT ===================== */
+  #hero-chat {
+    position: relative; z-index: 1;
+    padding: 0 4rem 7rem;
+    display: flex; justify-content: center;
+  }
+  .hchat-wrap {
+    width: 100%; max-width: 700px;
+    display: flex; flex-direction: column; align-items: center; gap: 1.4rem;
+  }
+  .hchat-tagline {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.66rem; letter-spacing: 0.36em;
+    text-transform: uppercase; color: var(--ash);
+    text-align: center;
+  }
+  .hchat-thread {
+    width: 100%; display: none;
+    flex-direction: column; gap: 0.8rem;
+    max-height: 340px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: #222 transparent;
+    padding-right: 2px;
+  }
+  .hchat-thread.visible { display: flex; }
+  .hchat-bubble {
+    max-width: 78%; padding: 0.75rem 1.1rem;
+    border-radius: 14px; font-size: 0.9rem; line-height: 1.6;
+    word-break: break-word; animation: fadeUp 0.22s ease;
+  }
+  .hchat-bubble.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg,#1e4d32,#1a3f28);
+    color: #e8f5ee; border: 1px solid rgba(61,186,111,0.2);
+    border-bottom-right-radius: 4px;
+  }
+  .hchat-bubble.agent {
+    align-self: flex-start;
+    background: #141418; color: var(--silver);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-bottom-left-radius: 4px;
+  }
+  .hchat-bubble.typing {
+    align-self: flex-start;
+    background: #141418; border: 1px solid rgba(255,255,255,0.07);
+    border-bottom-left-radius: 4px;
+    display: flex; gap: 5px; align-items: center;
+    padding: 0.75rem 1rem;
+  }
+  .hchat-bubble.typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green); opacity: 0.4;
+    animation: ab-bounce 1.2s infinite;
+  }
+  .hchat-bubble.typing span:nth-child(2) { animation-delay: 0.2s; }
+  .hchat-bubble.typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes ab-bounce {
+    0%,80%,100% { transform: scale(0.7); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+  .hchat-card {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(61,186,111,0.22);
+    border-radius: 18px;
+    padding: 1.1rem 1.2rem 0.9rem;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .hchat-card:focus-within {
+    border-color: rgba(61,186,111,0.5);
+    box-shadow: 0 0 0 3px rgba(61,186,111,0.06);
+  }
+  .hchat-input {
+    width: 100%; background: none; border: none; outline: none;
+    color: var(--white); font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem; line-height: 1.6; resize: none; max-height: 140px;
+  }
+  .hchat-input::placeholder { color: var(--steel); }
+  .hchat-actions {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-top: 0.8rem; gap: 0.8rem; flex-wrap: wrap;
+  }
+  .hchat-chips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .hchat-chip {
+    padding: 0.3rem 0.85rem; border-radius: 999px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    color: var(--ash); font-size: 0.72rem;
+    font-family: 'Syne', sans-serif; letter-spacing: 0.06em;
+    cursor: pointer; white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .hchat-chip:hover {
+    color: var(--green); border-color: rgba(61,186,111,0.4);
+    background: rgba(61,186,111,0.06);
+  }
+  .hchat-send {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg,#3DBA6F,#2a8a50);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.2s, transform 0.1s;
+    box-shadow: 0 4px 14px rgba(61,186,111,0.25);
+  }
+  .hchat-send:hover { opacity: 0.88; transform: scale(1.05); }
+  .hchat-send:active { transform: scale(0.96); }
+  @media (max-width: 768px) {
+    #hero-chat { padding: 0 1.2rem 4rem; }
+    .hchat-chip { font-size: 0.65rem; padding: 0.25rem 0.7rem; }
+  }
 
   /* ===================== ANIMATIONS ===================== */
   @keyframes fadeUp {
@@ -1325,11 +1272,36 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   </p>
   <div class="hero-btns">
     <a href="#portfolio" class="btn-primary">Explore Portfolio</a>
-    <a href="#ai-chat" class="btn-outline">Start a Conversation</a>
+    <a href="#hero-chat" class="btn-outline">Start a Conversation</a>
   </div>
   <div class="scroll-hint">
     <span>Scroll to explore</span>
     <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- HERO CHAT -->
+<section id="hero-chat">
+  <div class="hchat-wrap">
+    <p class="hchat-tagline">Tell us about your project</p>
+    <div class="hchat-thread" id="hchat-thread"></div>
+    <div class="hchat-card">
+      <textarea id="hchat-input" class="hchat-input" placeholder="Describe your project, vision, or just say hello…" rows="1"></textarea>
+      <div class="hchat-actions">
+        <div class="hchat-chips">
+          <button class="hchat-chip" data-msg="I need a residential project">Residential</button>
+          <button class="hchat-chip" data-msg="I need a commercial project">Commercial</button>
+          <button class="hchat-chip" data-msg="I need 3D rendering">3D Rendering</button>
+          <button class="hchat-chip" data-msg="I need interior design">Interior Design</button>
+          <button class="hchat-chip" data-msg="I need CAD / DWG drawings">CAD / DWG</button>
+        </div>
+        <button class="hchat-send" id="hchat-send" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1503,64 +1475,6 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   </div>
 </section>
 
-<!-- CTA -->
-<!-- ── INLINE AI CHAT SECTION ── -->
-<section id="ai-chat">
-  <div class="aichat-wrap reveal">
-    <div class="aichat-header">
-      <p class="section-eyebrow">Start The Conversation</p>
-      <h2 class="section-title" style="font-size:clamp(1.6rem,3.5vw,2.4rem);margin-bottom:0.8rem;">Tell Us About<br>Your Project</h2>
-      <p class="aichat-subtitle">Talk to our AI assistant — describe your vision, attach reference images, and we'll connect you with John.</p>
-    </div>
-
-    <div class="aichat-panel">
-      <!-- Corner accents -->
-      <div class="aichat-corner aichat-tl"></div>
-      <div class="aichat-corner aichat-br"></div>
-
-      <!-- Avatar + Status -->
-      <div class="aichat-agent-bar">
-        <div class="aichat-avatar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3DBA6F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <div>
-          <div class="aichat-agent-name">Alex · Alien Building Assistant</div>
-          <div class="aichat-agent-status"><span class="aichat-dot"></span>Online — replies instantly</div>
-        </div>
-      </div>
-
-      <!-- Messages -->
-      <div class="aichat-messages" id="aichat-messages">
-        <div class="aichat-msg agent">
-          <span>Hi! 👋 I'm Alex, Alien Building's assistant. Tell me about your project — what type of space are you looking to create? You can also attach reference images below.</span>
-        </div>
-      </div>
-
-      <!-- Image previews -->
-      <div class="aichat-previews" id="aichat-previews"></div>
-
-      <!-- Input area -->
-      <div class="aichat-input-row">
-        <label class="aichat-upload-btn" for="aichat-file-input" title="Attach project images">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          <input type="file" id="aichat-file-input" accept="image/*" multiple style="display:none">
-        </label>
-        <textarea id="aichat-input" class="aichat-textarea" placeholder="Describe your project, budget, location..." rows="1"></textarea>
-        <button id="aichat-send" class="aichat-send-btn" aria-label="Send">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
-        </button>
-      </div>
-      <div class="aichat-foot">Powered by Claude AI · Your information is kept private</div>
-    </div>
-  </div>
-</section>
 
 <footer>
   <div class="footer-copy">© 2025 Alien Building Studio — All Rights Reserved</div>
@@ -2257,7 +2171,104 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 <script>
   window.ALIEN_CHAT_URL = 'https://alien-building-chat-production.up.railway.app';
 </script>
-<script src="chat-widget.js"></script>
 
+<!-- HERO CHAT SCRIPT -->
+<script>
+(function() {
+  const BACKEND_URL = window.ALIEN_CHAT_URL || 'https://alien-building-chat-production.up.railway.app';
+  let sessionId = localStorage.getItem('ab_session');
+  if (!sessionId) {
+    sessionId = 'ab_' + Math.random().toString(36).slice(2) + Date.now();
+    localStorage.setItem('ab_session', sessionId);
+  }
+  const thread   = document.getElementById('hchat-thread');
+  const inputEl  = document.getElementById('hchat-input');
+  const sendBtn  = document.getElementById('hchat-send');
+  const chips    = document.querySelectorAll('.hchat-chip');
+  let isTyping   = false;
+  let pollInterval = null;
+  let lastPollTime = Date.now();
+
+  function scrollBottom() { thread.scrollTop = thread.scrollHeight; }
+  function showThread()   { thread.classList.add('visible'); }
+
+  function addBubble(text, type) {
+    const b = document.createElement('div');
+    b.className = 'hchat-bubble ' + type;
+    b.textContent = text;
+    thread.appendChild(b);
+    scrollBottom();
+  }
+
+  function showTyping() {
+    const b = document.createElement('div');
+    b.className = 'hchat-bubble typing'; b.id = 'hchat-typing';
+    b.innerHTML = '<span></span><span></span><span></span>';
+    thread.appendChild(b); scrollBottom();
+  }
+
+  function removeTyping() {
+    const t = document.getElementById('hchat-typing');
+    if (t) t.remove();
+  }
+
+  async function send(text) {
+    if (!text || isTyping) return;
+    showThread();
+    addBubble(text, 'user');
+    isTyping = true; showTyping();
+    try {
+      const res  = await fetch(BACKEND_URL + '/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, message: text })
+      });
+      const data = await res.json();
+      removeTyping();
+      addBubble(data.reply || "Sorry, something went wrong. Please try again.", 'agent');
+    } catch(e) {
+      removeTyping();
+      addBubble("Connection issue. Please try again in a moment.", 'agent');
+    }
+    isTyping = false;
+    startPolling();
+  }
+
+  sendBtn.addEventListener('click', () => {
+    const t = inputEl.value.trim(); inputEl.value = ''; inputEl.style.height = 'auto'; send(t);
+  });
+  inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const t = inputEl.value.trim(); inputEl.value = ''; inputEl.style.height = 'auto'; send(t);
+    }
+  });
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
+  });
+  chips.forEach(c => c.addEventListener('click', () => send(c.getAttribute('data-msg'))));
+
+  function startPolling() {
+    if (pollInterval) return;
+    pollInterval = setInterval(async () => {
+      try {
+        const res  = await fetch(BACKEND_URL + '/poll/' + sessionId + '?since=' + lastPollTime);
+        const data = await res.json();
+        if (data.replies && data.replies.length) {
+          showThread();
+          data.replies.forEach(r => {
+            const b = document.createElement('div');
+            b.className = 'hchat-bubble agent';
+            b.innerHTML = '<span style="font-size:0.65rem;font-family:Syne,sans-serif;letter-spacing:0.1em;color:#7aaeff;text-transform:uppercase;display:block;margin-bottom:3px">John</span>' + r.text;
+            thread.appendChild(b); scrollBottom();
+            lastPollTime = Math.max(lastPollTime, r.timestamp + 1);
+          });
+        }
+      } catch(_) {}
+    }, 3000);
+  }
+})();
+</script>
 </body>
 </html>
