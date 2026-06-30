@@ -143,6 +143,7 @@ function gtag_report_conversion(url) {
     align-items: center; justify-content: center;
     text-align: center;
     padding: 8rem 2rem 4rem;
+    transition: min-height 0.6s 1.05s cubic-bezier(0.65,0,0.35,1);
   }
 
   /* Hero logo */
@@ -2082,7 +2083,22 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     return;
   }
 
-  // Hold on screen for 5s, then collapse the logo inward and smoothly close the
+  const heroEl = document.getElementById('hero');
+  const navEl = document.querySelector('nav');
+
+  // The fixed nav's real rendered height (~145px) is taller than #hero's
+  // static 8rem (128px) top padding, so hero content was sliding partly
+  // underneath/behind the nav once the logo-collapse no longer left a big
+  // gap to hide that overlap in. Measure the nav directly and pad #hero
+  // to comfortably clear it, on load and on resize.
+  function syncHeroTopPadding() {
+    if (!heroEl || !navEl) return;
+    heroEl.style.paddingTop = (navEl.offsetHeight + 48) + 'px';
+  }
+  syncHeroTopPadding();
+  window.addEventListener('resize', syncHeroTopPadding);
+
+  // Hold on screen for 4s, then collapse the logo inward and smoothly close the
   // space it occupied, so content below glides up instead of snapping.
   setTimeout(() => {
     // Lock the wrapper's current rendered height as an explicit pixel value
@@ -2090,18 +2106,48 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     // give it a real starting number to animate from.
     const currentHeight = wrap.getBoundingClientRect().height;
     wrap.style.height = currentHeight + 'px';
-    // Force a reflow so the browser registers the explicit height before
-    // the next class change, otherwise the transition can get skipped.
+
+    // Also lock the hero section's own full-viewport height, so it can
+    // shrink down afterwards to fit just the remaining content instead of
+    // leaving a big dead zone below "Scroll to explore" before the next
+    // section starts.
+    let targetHeroHeight = null;
+    if (heroEl) {
+      const heroStyle = getComputedStyle(heroEl);
+      const padTop = parseFloat(heroStyle.paddingTop) || 0;
+      const padBottom = parseFloat(heroStyle.paddingBottom) || 0;
+      targetHeroHeight = padTop + padBottom + post.offsetHeight;
+      heroEl.style.minHeight = heroEl.getBoundingClientRect().height + 'px';
+    }
+
+    // Force a reflow so the browser registers the explicit heights above
+    // before the next style change, otherwise the transitions can get skipped.
     void wrap.offsetHeight;
 
     wrap.classList.add('collapsing');
+
+    // Drive the wrapper's box-collapse (height/margin) directly via inline
+    // styles. The .collapsing class also declares these, but an inline
+    // style (set just above) always wins the cascade over a class selector
+    // — so without this, the wrapper's box never actually shrank, it just
+    // sat there empty after its SVG content faded out, leaving a gap.
+    // (Opacity is intentionally left to the .collapsing class / SVG path
+    // animations — forcing the wrapper's own opacity here fights with its
+    // forwards-filling intro animation and causes an instant flash to
+    // invisible instead of the intended shrink-to-a-point collapse.)
+    wrap.style.height = '0px';
+    wrap.style.marginBottom = '0px';
+
+    if (heroEl && targetHeroHeight !== null) {
+      heroEl.style.minHeight = targetHeroHeight + 'px';
+    }
 
     // Reveal tagline + buttons (including "Scroll to explore") once the
     // logo has both visually vanished AND the space has finished closing.
     setTimeout(() => {
       post.classList.add('reveal-in');
     }, 1000);
-  }, 5000);
+  }, 4000);
 })();
 </script>
 
