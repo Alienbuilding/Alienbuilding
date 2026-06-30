@@ -159,19 +159,21 @@ function gtag_report_conversion(url) {
   }
   .hero-desc {
     max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
     font-size: 1rem;
     line-height: 1.8;
     color: var(--silver);
     margin-bottom: 2.6rem;
     text-align: center;
     opacity: 0;
-    animation: fadeUp 0.9s 1.5s forwards;
+    animation: fadeUp 0.7s 0.45s forwards;
   }
 
   .hero-btns {
     display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center;
     opacity: 0;
-    animation: fadeUp 0.9s 1.75s forwards;
+    animation: fadeUp 0.7s 0.6s forwards;
   }
 
   .btn-primary {
@@ -207,7 +209,7 @@ function gtag_report_conversion(url) {
     display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
     margin-top: 2.5rem;
     opacity: 0;
-    animation: fadeUp 0.9s 2.0s forwards;
+    animation: fadeUp 0.7s 0.8s forwards;
   }
   .scroll-hint span {
     font-size: 0.52rem; letter-spacing: 0.26em; text-transform: uppercase;
@@ -216,7 +218,7 @@ function gtag_report_conversion(url) {
   .scroll-arrow {
     width: 1px; height: 44px;
     background: linear-gradient(to bottom, var(--green), transparent);
-    animation: scrollLine 1.8s 2.2s infinite;
+    animation: scrollLine 1.8s 1.0s infinite;
   }
 
   /* ===================== PORTFOLIO STRIPS ===================== */
@@ -633,12 +635,14 @@ function gtag_report_conversion(url) {
   /* ===================== HERO CHAT ===================== */
   #hero-chat {
     position: relative; z-index: 1;
-    padding: 0 4rem 1.75rem;
+    width: 100%;
+    padding: 0 1rem;
+    margin: 0.5rem 0 2.2rem;
     display: flex; justify-content: center;
   }
   .hchat-wrap {
-    width: 100%; max-width: 700px;
-    display: flex; flex-direction: column; align-items: center; gap: 1.4rem;
+    width: 100%; max-width: 620px;
+    display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
   }
   .hchat-tagline {
     font-family: 'Syne', sans-serif;
@@ -648,7 +652,7 @@ function gtag_report_conversion(url) {
   }
   .hchat-thread {
     width: 100%; display: none;
-    flex-direction: column; gap: 0.8rem;
+    flex-direction: column; align-items: center; gap: 0.8rem;
     max-height: 340px; overflow-y: auto;
     scrollbar-width: thin; scrollbar-color: #222 transparent;
     padding-right: 2px;
@@ -670,6 +674,14 @@ function gtag_report_conversion(url) {
     background: #141418; color: var(--silver);
     border: 1px solid rgba(255,255,255,0.07);
     border-bottom-left-radius: 4px;
+  }
+  .hchat-bubble.agent.intro {
+    align-self: center;
+    text-align: center;
+    border-bottom-left-radius: 14px;
+  }
+  .hchat-bubble.agent.intro span {
+    text-align: center;
   }
   .hchat-bubble.typing {
     align-self: flex-start;
@@ -736,8 +748,9 @@ function gtag_report_conversion(url) {
   .hchat-send:hover { opacity: 0.88; transform: scale(1.05); }
   .hchat-send:active { transform: scale(0.96); }
   @media (max-width: 768px) {
-    #hero-chat { padding: 0 1.2rem 1rem; }
+    #hero-chat { padding: 0 0.4rem; }
     .hchat-chip { font-size: 0.65rem; padding: 0.25rem 0.7rem; }
+    .hchat-thread { max-height: 220px; }
   }
 
   /* ===================== ANIMATIONS ===================== */
@@ -790,7 +803,7 @@ function gtag_report_conversion(url) {
   /* Hero content (tagline + buttons + scroll hint) fades in right after the logo appears */
   .hero-post-logo {
     opacity: 0;
-    animation: fadeUp 0.9s 1.3s forwards;
+    animation: fadeUp 0.7s 0.3s forwards;
   }
   /* reveal-in is added by JS after the logo collapses — make it a no-op so
      it doesn't restart the animation and cause a flash */
@@ -1371,38 +1384,40 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
     <p class="hero-desc">
       3D visualization, CAD, Engineering &amp; Interior Design —<br>delivered with precision, on time, every time.
     </p>
+
+    <!-- HERO CHAT (moved up so it's the first thing visitors can act on) -->
+    <div id="hero-chat">
+      <div class="hchat-wrap">
+        <p class="hchat-tagline">Tell us about your project</p>
+        <div class="hchat-thread visible" id="hchat-thread">
+          <div class="hchat-bubble agent intro"><span style="font-size:0.65rem;font-family:Syne,sans-serif;letter-spacing:0.1em;color:#E0A878;text-transform:uppercase;display:block;margin-bottom:3px">John</span>Hey! What kind of project are you working on? Tap an option below or just tell me about it.</div>
+        </div>
+        <div class="hchat-card">
+          <textarea id="hchat-input" class="hchat-input" placeholder="Describe your project, vision, or just say hello…" rows="1"></textarea>
+          <div class="hchat-actions">
+            <div class="hchat-chips">
+              <button class="hchat-chip" data-msg="I need a residential project">Residential</button>
+              <button class="hchat-chip" data-msg="I need a commercial project">Commercial</button>
+              <button class="hchat-chip" data-msg="I need 3D rendering">3D Rendering</button>
+              <button class="hchat-chip" data-msg="I need interior design">Interior Design</button>
+              <button class="hchat-chip" data-msg="I need CAD / DWG drawings">CAD / DWG</button>
+            </div>
+            <button class="hchat-send" id="hchat-send" aria-label="Send">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="hero-btns">
-      <a href="#portfolio" class="btn-primary">Explore Portfolio</a>
-      <a href="javascript:void(0)" class="btn-primary" id="btn-start-chat">Start a Conversation</a>
+      <a href="#portfolio" class="btn-outline">Explore Portfolio</a>
     </div>
     <div class="scroll-hint">
       <span>Scroll to explore</span>
       <div class="scroll-arrow"></div>
-    </div>
-  </div>
-</section>
-
-<!-- HERO CHAT -->
-<section id="hero-chat">
-  <div class="hchat-wrap">
-    <p class="hchat-tagline">Tell us about your project</p>
-    <div class="hchat-thread" id="hchat-thread"></div>
-    <div class="hchat-card">
-      <textarea id="hchat-input" class="hchat-input" placeholder="Describe your project, vision, or just say hello…" rows="1"></textarea>
-      <div class="hchat-actions">
-        <div class="hchat-chips">
-          <button class="hchat-chip" data-msg="I need a residential project">Residential</button>
-          <button class="hchat-chip" data-msg="I need a commercial project">Commercial</button>
-          <button class="hchat-chip" data-msg="I need 3D rendering">3D Rendering</button>
-          <button class="hchat-chip" data-msg="I need interior design">Interior Design</button>
-          <button class="hchat-chip" data-msg="I need CAD / DWG drawings">CAD / DWG</button>
-        </div>
-        <button class="hchat-send" id="hchat-send" aria-label="Send">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
-        </button>
-      </div>
     </div>
   </div>
 </section>
@@ -2104,7 +2119,7 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
   syncHeroTopPadding();
   window.addEventListener('resize', syncHeroTopPadding);
 
-  // Hold on screen for 4s, then collapse the logo inward and smoothly close the
+  // Hold on screen briefly, then collapse the logo inward and smoothly close the
   // space it occupied, so content below glides up instead of snapping.
   setTimeout(() => {
     // Lock the wrapper's current rendered height as an explicit pixel value
@@ -2152,8 +2167,8 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     // logo has both visually vanished AND the space has finished closing.
     setTimeout(() => {
       post.classList.add('reveal-in');
-    }, 1000);
-  }, 4000);
+    }, 500);
+  }, 1200);
 })();
 </script>
 
