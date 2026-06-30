@@ -1070,7 +1070,7 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
     <li><a href="#services">Services</a></li>
     <li><a href="#clients">Clients</a></li>
     <li><a href="#meet">About</a></li>
-    <li><a href="#hero-chat" class="nav-cta">Contact</a></li>
+    <li><a href="#hero-chat" class="nav-cta" id="nav-contact-link">Contact</a></li>
   </ul>
   <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -1084,7 +1084,7 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   <a href="#services" class="mob-link">Services</a>
   <a href="#clients" class="mob-link">Clients</a>
   <a href="#meet" class="mob-link">About</a>
-  <a href="#hero-chat" class="mob-link mob-cta">Contact</a>
+  <a href="#hero-chat" class="mob-link mob-cta" id="mob-contact-link">Contact</a>
 </div>
 
 <!-- HERO -->
@@ -2165,26 +2165,39 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
   });
   chips.forEach(c => c.addEventListener('click', () => send(c.getAttribute('data-msg'))));
 
-  // "Start a Conversation" — center the chat box in viewport then focus input
-  const startBtn = document.getElementById('btn-start-chat');
-  if (startBtn) {
-    startBtn.addEventListener('click', function(e) {
-      e.preventDefault(); // stop default anchor jump
-      const card = document.querySelector('.hchat-card');
-      if (card) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => {
-          const input = document.getElementById('hchat-input');
-          if (input) {
-            input.focus();
-            // Flash the border green so client sees the box is active
-            card.style.borderColor = 'rgba(61,186,111,0.65)';
-            card.style.boxShadow   = '0 0 0 4px rgba(61,186,111,0.09)';
-          }
-        }, 600);
+  // Shared helper — centers the chat box in viewport then focuses the input.
+  // Used by "Start a Conversation", nav "Contact", and mobile menu "Contact"
+  // so all three behave identically (none of them get hidden behind the sticky nav bar).
+  function scrollToChatAndFocus() {
+    const card = document.querySelector('.hchat-card');
+    if (!card) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => {
+      const input = document.getElementById('hchat-input');
+      if (input) {
+        input.focus();
+        // Flash the border green so client sees the box is active
+        card.style.borderColor = 'rgba(61,186,111,0.65)';
+        card.style.boxShadow   = '0 0 0 4px rgba(61,186,111,0.09)';
       }
-    });
+    }, 600);
   }
+
+  ['btn-start-chat', 'nav-contact-link', 'mob-contact-link'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', function(e) {
+        e.preventDefault(); // stop default anchor jump that lands behind the sticky nav
+        // If this is the mobile Contact link, close the mobile menu first
+        const mobMenu = document.getElementById('mobile-menu');
+        if (mobMenu && mobMenu.classList.contains('open')) {
+          mobMenu.classList.remove('open');
+          document.body.style.overflow = '';
+        }
+        scrollToChatAndFocus();
+      });
+    }
+  });
 
   function startPolling() {
     if (pollInterval) return;
