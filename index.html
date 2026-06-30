@@ -164,13 +164,13 @@ function gtag_report_conversion(url) {
     margin-bottom: 2.6rem;
     text-align: center;
     opacity: 0;
-    animation: fadeUp 0.9s 0.6s forwards;
+    animation: fadeUp 0.9s 1.5s forwards;
   }
 
   .hero-btns {
     display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center;
     opacity: 0;
-    animation: fadeUp 0.9s 0.85s forwards;
+    animation: fadeUp 0.9s 1.75s forwards;
   }
 
   .btn-primary {
@@ -204,9 +204,9 @@ function gtag_report_conversion(url) {
 
   .scroll-hint {
     display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-    opacity: 0;
-    animation: fadeUp 1s 1.3s forwards;
     margin-top: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 2.0s forwards;
   }
   .scroll-hint span {
     font-size: 0.52rem; letter-spacing: 0.26em; text-transform: uppercase;
@@ -215,7 +215,7 @@ function gtag_report_conversion(url) {
   .scroll-arrow {
     width: 1px; height: 44px;
     background: linear-gradient(to bottom, var(--green), transparent);
-    animation: scrollLine 1.8s 2s infinite;
+    animation: scrollLine 1.8s 2.2s infinite;
   }
 
   /* ===================== PORTFOLIO STRIPS ===================== */
@@ -632,7 +632,7 @@ function gtag_report_conversion(url) {
   /* ===================== HERO CHAT ===================== */
   #hero-chat {
     position: relative; z-index: 1;
-    padding: 0 4rem 7rem;
+    padding: 0 4rem 1.75rem;
     display: flex; justify-content: center;
   }
   .hchat-wrap {
@@ -735,7 +735,7 @@ function gtag_report_conversion(url) {
   .hchat-send:hover { opacity: 0.88; transform: scale(1.05); }
   .hchat-send:active { transform: scale(0.96); }
   @media (max-width: 768px) {
-    #hero-chat { padding: 0 1.2rem 4rem; }
+    #hero-chat { padding: 0 1.2rem 1rem; }
     .hchat-chip { font-size: 0.65rem; padding: 0.25rem 0.7rem; }
   }
 
@@ -743,6 +743,70 @@ function gtag_report_conversion(url) {
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(22px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── LOGO INTRO COLLAPSE ── */
+  .hero-logo-wrap {
+    transition: height 0.6s 1.05s cubic-bezier(0.65,0,0.35,1),
+                margin 0.6s 1.05s cubic-bezier(0.65,0,0.35,1),
+                opacity 0.5s 1.05s ease;
+    overflow: hidden;
+  }
+  .hero-logo-wrap svg path {
+    transition: transform 0.85s cubic-bezier(0.65,0,0.35,1), opacity 0.7s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .hero-logo-wrap.collapsing svg path {
+    transform: scale(0.02);
+    opacity: 0;
+  }
+  .hero-logo-wrap.collapsing {
+    height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+  }
+  /* Tic-tac / UFO core flash at the exact collapse point */
+  .logo-collapse-core {
+    position: absolute; top: 50%; left: 50%;
+    width: 4px; height: 4px;
+    background: radial-gradient(circle, #fff 0%, rgba(255,255,255,0.6) 40%, transparent 75%);
+    border-radius: 50%;
+    transform: translate(-50%,-50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .hero-logo-wrap.collapsing .logo-collapse-core {
+    animation: core-pulse 0.95s 0.55s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  @keyframes core-pulse {
+    0%   { transform: translate(-50%,-50%) scale(0); opacity: 0; }
+    55%  { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+    70%  { transform: translate(-50%,-50%) scaleX(7) scaleY(0.6); opacity: 0.9; }
+    100% { transform: translate(-50%,-50%) scaleX(0.1) scaleY(0.1); opacity: 0; }
+  }
+  /* Hero content (tagline + buttons + scroll hint) fades in right after the logo appears */
+  .hero-post-logo {
+    opacity: 0;
+    animation: fadeUp 0.9s 1.3s forwards;
+  }
+  /* reveal-in is added by JS after the logo collapses — make it a no-op so
+     it doesn't restart the animation and cause a flash */
+  .hero-post-logo.reveal-in {
+    opacity: 1;
+    animation: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-logo-wrap { transition: none; }
+    .hero-logo-wrap svg path { transition: none; }
+    .hero-logo-wrap.collapsing svg path { transform: none; opacity: 1; }
+    .hero-logo-wrap.collapsing { height: auto; opacity: 1; }
+    .logo-collapse-core { display: none; }
+    .hero-post-logo { opacity: 1; animation: none; }
+    .hero-desc { opacity: 1; animation: none; }
+    .hero-btns { opacity: 1; animation: none; }
+    .scroll-hint { opacity: 1; animation: none; }
   }
   @keyframes scrollLine {
     0%   { transform: scaleY(0); transform-origin: top; opacity: 1; }
@@ -1089,7 +1153,8 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-logo-wrap" style="opacity:0;animation:fadeUp 1s 0.2s forwards">
+  <div class="hero-logo-wrap" id="hero-logo-wrap" style="opacity:0;animation:fadeUp 1s 0.2s forwards">
+    <div class="logo-collapse-core"></div>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972.9 693" style="width:100%;height:auto;display:block"><path fill="#FFFFFF" d="M365.8,343.9H249.5c-0.8,0.1-1.5-0.2-1.9-0.8c-0.6-0.8-0.3-1.8-0.2-1.9c2-14.1,4-28.2,6-42.3
 c0-0.5,0.1-1.9,1.1-3.1c1.6-2.1,4.2-2,4.5-2c36.4,0,72.8,0,109.1,0c0.7,0,3.2,0.1,4.7,1.8c1,1.1,1.2,2.5,1.3,3.5
 c1.1,21.1,1.6,36.5,1.5,39.7c0,0.8-0.1,2.6-1.4,3.9c-1.1,1-2.5,1.2-3.4,1.3C369.1,343.8,367.5,343.8,365.8,343.9z"/>
@@ -1301,16 +1366,18 @@ c-4.3,10-10.6,22.1-19.8,34.9c-10.1,14.1-20.7,24.7-29.5,32.3c33.5,0,67.1,0,100.6-
 c0.9-1.3,1.4-2.5,1.6-3.6c0.2,0.9,0.9,3.4,3.2,5.5c0.6,0.6,1.2,1,1.8,1.3c2.8,0,5.6,0,8.4,0c25.8,0,51.6,0,77.4,0
 C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   </div>
-  <p class="hero-desc">
-    3D visualization, CAD, Engineering &amp; Interior Design —<br>delivered with precision, on time, every time.
-  </p>
-  <div class="hero-btns">
-    <a href="#portfolio" class="btn-primary">Explore Portfolio</a>
-    <a href="javascript:void(0)" class="btn-primary" id="btn-start-chat">Start a Conversation</a>
-  </div>
-  <div class="scroll-hint">
-    <span>Scroll to explore</span>
-    <div class="scroll-arrow"></div>
+  <div class="hero-post-logo" id="hero-post-logo">
+    <p class="hero-desc">
+      3D visualization, CAD, Engineering &amp; Interior Design —<br>delivered with precision, on time, every time.
+    </p>
+    <div class="hero-btns">
+      <a href="#portfolio" class="btn-primary">Explore Portfolio</a>
+      <a href="javascript:void(0)" class="btn-primary" id="btn-start-chat">Start a Conversation</a>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll to explore</span>
+      <div class="scroll-arrow"></div>
+    </div>
   </div>
 </section>
 
@@ -1545,7 +1612,7 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
 const canvas = document.getElementById('universe-canvas');
 const ctx = canvas.getContext('2d', { willReadFrequently: false, alpha: true });
 let W, H, scrollY = 0, t = 0;
-let stars = [], nebulae = [], galaxies = [], blackHoles = [], shooters = [];
+let stars = [], nebulae = [], galaxies = [], shooters = [];
 let lastFrameTime = 0;
 const FRAME_INTERVAL = 1000 / 40; // cap at 40fps for canvas
 
@@ -1630,30 +1697,6 @@ function initGalaxies() {
 }
 
 /* ---- BLACK HOLES ---- */
-function initBlackHoles() {
-  blackHoles = [];
-  const count = 1 + Math.floor(W / 950);
-  for (let i = 0; i < count; i++) {
-    let bx, by;
-    do {
-      bx = rand(W*0.1, W*0.9);
-      by = rand(H*0.1, H*0.9);
-    } while (Math.hypot(bx - W/2, by - H/2) < Math.min(W,H)*0.28);
-    // Cool disk: silver-white or faint green
-    const green = Math.random() < 0.3;
-    blackHoles.push({
-      x: bx, y: by,
-      r:          rand(14, 26),
-      diskR:      rand(38, 75),
-      tilt:       rand(0.12, 0.52),
-      angle:      Math.random() * Math.PI * 2,
-      spinSpeed:  rand(0.0008, 0.0022),
-      parallax:   rand(0.03, 0.07),
-      green
-    });
-  }
-}
-
 /* ---- DRAW GALAXY ---- */
 function drawGalaxy(g, dy) {
   ctx.save();
@@ -1684,58 +1727,6 @@ function drawGalaxy(g, dy) {
   ctx.globalAlpha = 1;
   ctx.fillStyle = core;
   ctx.beginPath(); ctx.arc(0,0,g.coreR*2.2,0,Math.PI*2); ctx.fill();
-  ctx.restore();
-}
-
-/* ---- DRAW BLACK HOLE ---- */
-function drawBlackHole(bh, dy) {
-  ctx.save();
-  ctx.translate(bh.x, bh.y - dy);
-
-  // Outer gravitational lensing glow
-  const lensR = bh.r * 3.4;
-  const lensG = ctx.createRadialGradient(0,0,bh.r, 0,0,lensR);
-  const lc = bh.green ? [61,186,111] : [180,185,200];
-  lensG.addColorStop(0,    'rgba(0,0,0,0)');
-  lensG.addColorStop(0.5,  `rgba(${lc[0]},${lc[1]},${lc[2]},0.15)`);
-  lensG.addColorStop(0.78, `rgba(${lc[0]},${lc[1]},${lc[2]},0.08)`);
-  lensG.addColorStop(1,    'rgba(0,0,0,0)');
-  ctx.fillStyle = lensG; ctx.globalAlpha = 1;
-  ctx.beginPath(); ctx.arc(0,0,lensR,0,Math.PI*2); ctx.fill();
-
-  // Accretion disk rings
-  ctx.rotate(bh.angle);
-  ctx.scale(1, bh.tilt);
-  for (let ring = 0; ring < 4; ring++) {
-    const rI = bh.r * (1.3 + ring * 0.52);
-    const rO = rI + bh.diskR * (0.14 + ring * 0.055);
-    const brightness = Math.max(20, 200 - ring * 45);
-    const diskG = ctx.createRadialGradient(0,0,rI, 0,0,rO);
-    const dc = bh.green
-      ? [40 + ring*10, 160 - ring*25, 80 - ring*10]
-      : [brightness, brightness+5, brightness+15];
-    diskG.addColorStop(0,   `rgba(${dc[0]},${dc[1]},${dc[2]},${0.72 - ring*0.13})`);
-    diskG.addColorStop(0.55,`rgba(${dc[0]-15},${dc[1]-15},${dc[2]-10},${0.3 - ring*0.04})`);
-    diskG.addColorStop(1,   'rgba(0,0,0,0)');
-    ctx.globalAlpha = 0.88;
-    ctx.beginPath();
-    ctx.arc(0,0,rO,0,Math.PI*2);
-    ctx.arc(0,0,rI,Math.PI*2,0,true);
-    ctx.fillStyle = diskG; ctx.fill();
-  }
-  ctx.scale(1, 1/bh.tilt);
-  ctx.rotate(-bh.angle);
-
-  // Singularity
-  ctx.globalAlpha = 1;
-  ctx.fillStyle = '#000000';
-  ctx.beginPath(); ctx.arc(0,0,bh.r,0,Math.PI*2); ctx.fill();
-
-  // Photon ring
-  ctx.strokeStyle = bh.green ? 'rgba(80,220,130,0.75)' : 'rgba(210,215,240,0.7)';
-  ctx.lineWidth = 1.0; ctx.globalAlpha = 0.55;
-  ctx.beginPath(); ctx.arc(0,0,bh.r+1.2,0,Math.PI*2); ctx.stroke();
-
   ctx.restore();
 }
 
@@ -1828,12 +1819,6 @@ function draw(now) {
     drawGalaxy(g, scrollY * g.parallax);
   });
 
-  // Black holes
-  blackHoles.forEach(bh => {
-    bh.angle += bh.spinSpeed;
-    drawBlackHole(bh, scrollY * bh.parallax);
-  });
-
   // Stars
   stars.forEach(s => drawStar(s));
 
@@ -1857,9 +1842,9 @@ function draw(now) {
 
 }
 
-window.addEventListener('resize', () => { resize(); initStars(); initNebulae(); initGalaxies(); initBlackHoles(); });
+window.addEventListener('resize', () => { resize(); initStars(); initNebulae(); initGalaxies(); });
 window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
-resize(); initStars(); initNebulae(); initGalaxies(); initBlackHoles();
+resize(); initStars(); initNebulae(); initGalaxies();
 requestAnimationFrame(draw);
 
 /* ================================================================
@@ -2078,6 +2063,46 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 
 <script>
   window.ALIEN_CHAT_URL = 'https://alien-building-chat-production.up.railway.app';
+</script>
+
+<!-- LOGO INTRO COLLAPSE ANIMATION -->
+<script>
+(function() {
+  const wrap = document.getElementById('hero-logo-wrap');
+  const post = document.getElementById('hero-post-logo');
+  if (!wrap || !post) return;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion) {
+    // Skip straight to final state: logo hidden, content visible
+    wrap.style.display = 'none';
+    post.classList.add('reveal-in');
+    post.style.opacity = '1';
+    return;
+  }
+
+  // Hold on screen for 5s, then collapse the logo inward and smoothly close the
+  // space it occupied, so content below glides up instead of snapping.
+  setTimeout(() => {
+    // Lock the wrapper's current rendered height as an explicit pixel value
+    // first — CSS can't smoothly transition from "auto" height to 0, so we
+    // give it a real starting number to animate from.
+    const currentHeight = wrap.getBoundingClientRect().height;
+    wrap.style.height = currentHeight + 'px';
+    // Force a reflow so the browser registers the explicit height before
+    // the next class change, otherwise the transition can get skipped.
+    void wrap.offsetHeight;
+
+    wrap.classList.add('collapsing');
+
+    // Reveal tagline + buttons (including "Scroll to explore") once the
+    // logo has both visually vanished AND the space has finished closing.
+    setTimeout(() => {
+      post.classList.add('reveal-in');
+    }, 1000);
+  }, 5000);
+})();
 </script>
 
 <!-- HERO CHAT SCRIPT -->
