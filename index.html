@@ -18,12 +18,20 @@ function gtag_report_conversion(url) {
       window.location = url;
     }
   };
-  gtag('event', 'conversion', {
-      'send_to': 'AW-18280246171/jJSWCInRi8ccEJvX2YxE',
-      'value': 1.0,
-      'currency': 'USD',
-      'event_callback': callback
-  });
+  // Safety check — if gtag failed to load (ad blocker, slow network, etc.)
+  // don't let it crash the page or block anything downstream.
+  if (typeof gtag === 'function') {
+    try {
+      gtag('event', 'conversion', {
+          'send_to': 'AW-18280246171/jJSWCInRi8ccEJvX2YxE',
+          'value': 1.0,
+          'currency': 'USD',
+          'event_callback': callback
+      });
+    } catch (e) {
+      console.warn('gtag conversion event failed (non-fatal):', e);
+    }
+  }
   return false;
 }
 </script>
@@ -2116,7 +2124,14 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     if (!text || isTyping) return;
     showThread();
     addBubble(text, 'user');
-    gtag_report_conversion();
+    // Fire conversion tracking safely — never let it block or break the chat
+    try {
+      if (typeof gtag_report_conversion === 'function') {
+        gtag_report_conversion();
+      }
+    } catch (e) {
+      console.warn('gtag conversion tracking failed (non-fatal):', e);
+    }
     isTyping = true; showTyping();
     try {
       const res  = await fetch(BACKEND_URL + '/chat', {
