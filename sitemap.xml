@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://alienbuilding.com/</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://alienbuilding.com/images/gr04.webp</image:loc>
+      <image:title>Residential game room — 3D rendering</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://alienbuilding.com/images/ts01.webp</image:loc>
+      <image:title>AYC Tennis Pro Shop — interior rendering</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://alienbuilding.com/images/k01.webp</image:loc>
+      <image:title>Kitchen — 3D interior rendering</image:title>
+    </image:image>
+  </url>
+</urlset>

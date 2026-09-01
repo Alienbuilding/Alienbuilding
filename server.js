@@ -130,7 +130,9 @@ app.post('/chat', async (req, res) => {
       await notifyJohn(sessionId, extractLead(session.history), session.history);
     }
 
-    res.json({ reply: cleanResponse, sessionId });
+    // leadReady lets the website fire the Google Ads conversion at the RIGHT
+    // moment — when the lead is actually qualified, not on the first message.
+    res.json({ reply: cleanResponse, sessionId, leadReady });
 
   } catch (err) {
     console.error('Chat error:', err);
@@ -194,6 +196,57 @@ app.get('/poll/:sessionId', (req, res) => {
     .filter(r => r.timestamp > since);
 
   res.json({ replies: newReplies });
+});
+
+// ── ROUTE: website contact form → WhatsApp to John ────────────
+const leadRate = new Map();   // ip -> [timestamps]
+
+app.post('/lead', async (req, res) => {
+  try {
+    const { name, email, projectType, timeline, message, page, referrer, company } = req.body || {};
+
+    // Honeypot: bots fill hidden fields. Accept silently so they stop retrying.
+    if (company) return res.json({ ok: true });
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'name, email and message are required' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(email))) {
+      return res.status(400).json({ error: 'that email address does not look valid' });
+    }
+
+    // Simple rate limit: 5 submissions per IP per hour.
+    const ip  = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip || 'unknown';
+    const now = Date.now();
+    const hits = (leadRate.get(ip) || []).filter(t => now - t < 3600e3);
+    if (hits.length >= 5) return res.status(429).json({ error: 'too many submissions, try again later' });
+    hits.push(now);
+    leadRate.set(ip, hits);
+
+    const clip = (s, n) => String(s).slice(0, n);
+    const body =
+      `🟢 *New lead — website form*\n\n` +
+      `*Name:* ${clip(name, 80)}\n` +
+      `*Email:* ${clip(email, 120)}\n` +
+      `*Needs:* ${clip(projectType || 'not specified', 80)}\n` +
+      `*Timeline:* ${clip(timeline || 'not specified', 60)}\n\n` +
+      `*Project:*\n${clip(message, 1200)}\n\n` +
+      `_From: ${clip(page || 'alienbuilding.com', 120)}_\n` +
+      `_Referrer: ${clip(referrer || 'direct', 120)}_`;
+
+    await twilioClient.messages.create({
+      from: `whatsapp:${TWILIO_NUMBER}`,
+      to: JOHN_WHATSAPP,
+      body
+    });
+
+    console.log(`✅ Form lead from ${name} <${email}>`);
+    res.json({ ok: true });
+
+  } catch (err) {
+    console.error('Lead form error:', err);
+    res.status(500).json({ error: 'Could not send. Please email us directly.' });
+  }
 });
 
 // ── HEALTH CHECK ──────────────────────────────────────────────

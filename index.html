@@ -10,28 +10,65 @@
 
   gtag('config', 'AW-18280246171');
 </script>
-<!-- Event snippet for Submit lead form conversion page -->
+<!-- ============================================================
+     CONVERSION TRACKING
+     Two distinct signals, so Smart Bidding optimises for real leads:
+
+       abTrack('lead_started')  — someone engaged (chat opened, first
+                                  message). NOT a conversion. Keep this
+                                  as a secondary action in Google Ads,
+                                  with "Include in Conversions" OFF.
+
+       abLead('form' | 'chat')  — a QUALIFIED lead: form submitted, or the
+                                  chat collected everything John needs.
+                                  This is the primary conversion action —
+                                  the only one bidding should chase.
+
+     ⚠️ Create a NEW conversion action in Google Ads for qualified leads and
+     paste its send_to label into AB_CONV.qualified below. Until you do, it
+     reuses the existing label, which is better than the old behaviour
+     (every chatbot tap counted) but still not cleanly separated.
+     ============================================================ -->
 <script>
-function gtag_report_conversion(url) {
-  var callback = function () {
-    if (typeof(url) != 'undefined') {
-      window.location = url;
-    }
-  };
-  // Safety check — if gtag failed to load (ad blocker, slow network, etc.)
-  // don't let it crash the page or block anything downstream.
-  if (typeof gtag === 'function') {
-    try {
+var AB_CONV = {
+  qualified: 'AW-18280246171/jJSWCInRi8ccEJvX2YxE',  // ← replace with the new "Qualified lead" label
+  leadValue: 150.0                                    // your average value per qualified lead, in USD
+};
+
+// Engagement signal — an event, never a conversion.
+function abTrack(name, params) {
+  try {
+    if (typeof gtag === 'function') gtag('event', name, params || {});
+  } catch (e) { /* ad blocker, offline — never let tracking break the page */ }
+}
+
+// The real thing: a qualified lead. Fired once per session.
+var _abLeadFired = false;
+function abLead(source, url) {
+  var go = function () { if (typeof url !== 'undefined') window.location = url; };
+  if (_abLeadFired) { go(); return false; }
+  _abLeadFired = true;
+  try {
+    if (typeof gtag === 'function') {
       gtag('event', 'conversion', {
-          'send_to': 'AW-18280246171/jJSWCInRi8ccEJvX2YxE',
-          'value': 1.0,
-          'currency': 'USD',
-          'event_callback': callback
+        send_to: AB_CONV.qualified,
+        value: AB_CONV.leadValue,
+        currency: 'USD',
+        transaction_id: 'ab_' + Date.now(),
+        event_callback: go
       });
-    } catch (e) {
-      console.warn('gtag conversion event failed (non-fatal):', e);
+      setTimeout(go, 1200);   // don't strand the visitor if the callback never fires
+      return false;
     }
-  }
+  } catch (e) { /* non-fatal */ }
+  go();
+  return false;
+}
+
+// Back-compat: anything still calling the old name now records engagement only.
+function gtag_report_conversion(url) {
+  abTrack('lead_started');
+  if (typeof url !== 'undefined') window.location = url;
   return false;
 }
 </script>
@@ -40,7 +77,60 @@ function gtag_report_conversion(url) {
 <link rel="shortcut icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" type="image/svg+xml" href="favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alien Building — Architecture, Engineering & Interior Design</title>
+<title>3D Rendering &amp; Revit Drafting for Architects | Alien Building</title>
+<meta name="description" content="Photoreal 3D renderings, Revit/BIM models and CAD sets for architects, interior designers and homeowners. 200+ projects delivered. Send your plans and get scope and pricing back within 24 hours.">
+<link rel="canonical" href="https://alienbuilding.com/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#F5F1E8">
+<link rel="preload" as="image" href="images/gr04.webp" fetchpriority="high">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Alien Building Studio">
+<meta property="og:url" content="https://alienbuilding.com/">
+<meta property="og:title" content="3D Rendering &amp; Revit Drafting for Architects | Alien Building">
+<meta property="og:description" content="Photoreal 3D renderings, Revit/BIM models and CAD sets for architects, interior designers and homeowners. Send your plans, get scope and pricing back in 24 hours.">
+<meta property="og:image" content="https://alienbuilding.com/images/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Photorealistic interior rendering of a living room by Alien Building Studio">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="3D Rendering &amp; Revit Drafting for Architects | Alien Building">
+<meta name="twitter:description" content="Photoreal 3D renderings, Revit/BIM models and CAD sets. Send your plans, get scope and pricing back in 24 hours.">
+<meta name="twitter:image" content="https://alienbuilding.com/images/og-cover.jpg">
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Alien Building Studio",
+  "url": "https://alienbuilding.com/",
+  "image": "https://alienbuilding.com/images/og-cover.jpg",
+  "description": "Architectural visualization and BIM studio producing photoreal 3D renderings, Revit/BIM models, CAD drafting and interior design visuals for architects, interior designers and homeowners.",
+  "priceRange": "$$",
+  "areaServed": [
+    { "@type": "Country", "name": "United States" },
+    { "@type": "Country", "name": "Canada" }
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Services",
+    "itemListElement": [
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "3D Architectural Rendering" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Revit / BIM Modeling" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "CAD Drafting & Construction Documents" } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Interior Design Visualization" } }
+    ]
+  },
+  "sameAs": [
+    "https://www.upwork.com/freelancers/johninteriordesign",
+    "https://instagram.com/alienbuilding"
+  ]
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -134,14 +224,14 @@ function gtag_report_conversion(url) {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     text-align: center;
-    padding: 8rem 2rem 4rem;
+    padding: clamp(5.5rem, 9vw, 8rem) 1.25rem 3.5rem;
     transition: min-height 0.6s 1.05s cubic-bezier(0.65,0,0.35,1);
   }
 
   /* Hero logo */
   .hero-logo-wrap {
-    width: min(700px, 88vw);
-    margin-bottom: 2.8rem;
+    width: min(560px, 62vw);
+    margin-bottom: 1.5rem;
     position: relative;
     filter: drop-shadow(0 4px 18px rgba(42,37,32,0.10)) drop-shadow(0 0 10px rgba(42,37,32,0.08));
   }
@@ -149,17 +239,95 @@ function gtag_report_conversion(url) {
     display: block;
     background: transparent;
   }
+
+  /* ---- Hero headline ---- */
+  .hero-h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.8rem, 3.9vw, 2.75rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--pure-white);
+    max-width: 20ch;
+    margin: 0 auto 0.9rem;
+    text-wrap: balance;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero-h1 em {
+    font-style: normal;
+    display: block;
+    color: var(--ash);
+    font-size: 0.62em;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    margin-top: 0.35em;
+  }
+
   .hero-desc {
-    max-width: 520px;
+    max-width: 560px;
     margin-left: auto;
     margin-right: auto;
-    font-size: 1rem;
-    line-height: 1.8;
+    font-size: clamp(0.92rem, 1.5vw, 1.02rem);
+    line-height: 1.65;
     color: var(--silver);
-    margin-bottom: 2.6rem;
+    margin-bottom: 1.1rem;
     text-align: center;
     opacity: 0;
     animation: fadeUp 0.7s 0.45s forwards;
+  }
+
+  .hero-proof {
+    display: flex; flex-wrap: wrap; gap: 0.55rem 1.4rem;
+    justify-content: center; align-items: center;
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.52s forwards;
+  }
+  .hero-proof span {
+    font-family: 'Fraunces', serif;
+    font-size: 0.58rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ash);
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .hero-proof span::before {
+    content: ''; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--steel); flex-shrink: 0;
+  }
+
+  /* ---- Hero showpiece render ---- */
+  .hero-shot {
+    width: min(940px, 100%);
+    margin: 0 auto 2rem;
+    position: relative;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--graphite);
+    box-shadow: 0 18px 50px rgba(42,37,32,0.13);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.58s forwards;
+  }
+  .hero-shot img {
+    display: block; width: 100%; height: auto;
+    aspect-ratio: 16 / 9; object-fit: cover;
+    max-height: min(48vh, 470px);
+  }
+  .hero-shot figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 1.6rem 1.1rem 0.75rem;
+    background: linear-gradient(to top, rgba(28,24,20,0.62), transparent);
+    font-family: 'Fraunces', serif;
+    font-size: 0.56rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: #F5F1E8; text-align: left;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+
+  @media (max-width: 600px) {
+    .hero-logo-wrap { width: min(420px, 56vw); margin-bottom: 1.1rem; }
+    .hero-shot { margin-bottom: 1.5rem; }
+    .hero-proof { gap: 0.4rem 1rem; margin-bottom: 1.4rem; }
   }
 
   .hero-btns {
@@ -265,7 +433,9 @@ function gtag_report_conversion(url) {
   }
   .card-img-layer {
     position: absolute; inset: 0;
-    background-size: cover; background-position: center;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    display: block;
     opacity: 0;
     transition: opacity 1.4s ease;
     pointer-events: none;
@@ -890,6 +1060,133 @@ function gtag_report_conversion(url) {
   /* ===================== STRIP DRAG CURSOR ===================== */
   .strip-wrapper { cursor: grab; }
   .strip-wrapper.dragging { cursor: grabbing; }
+  /* ============================================================
+     CONTACT — form + direct channels
+     ============================================================ */
+  #contact {
+    padding: 6rem 2rem 6.5rem;
+    background: var(--onyx);
+    border-top: 1px solid var(--border);
+  }
+  .contact-inner {
+    max-width: 1080px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 3.5rem;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    #contact { padding: 4.5rem 1.25rem 5rem; }
+    .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+
+  .contact-lead {
+    font-size: 1rem; line-height: 1.7; color: var(--silver);
+    max-width: 46ch; margin-bottom: 2rem;
+  }
+
+  .cform { display: grid; gap: 1.05rem; }
+  .cform-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.05rem; }
+  @media (max-width: 560px) { .cform-row { grid-template-columns: 1fr; } }
+
+  .cfield { display: flex; flex-direction: column; gap: 0.4rem; }
+  .cfield label {
+    font-family: 'Fraunces', serif;
+    font-size: 0.56rem; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ash);
+  }
+  .cfield input,
+  .cfield select,
+  .cfield textarea {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    color: var(--pure-white);
+    background: var(--charcoal);
+    border: 1px solid var(--graphite);
+    border-radius: 0;
+    padding: 0.75rem 0.85rem;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .cfield textarea { resize: vertical; min-height: 118px; line-height: 1.55; }
+  .cfield input::placeholder, .cfield textarea::placeholder { color: var(--steel); }
+  .cfield input:focus, .cfield select:focus, .cfield textarea:focus {
+    border-color: var(--ash);
+    box-shadow: 0 0 0 3px rgba(58,51,43,0.08);
+  }
+  .cfield input:user-invalid, .cfield textarea:user-invalid { border-color: #B4432F; }
+
+  .cform-submit {
+    display: flex; align-items: center; gap: 1.1rem;
+    flex-wrap: wrap; margin-top: 0.35rem;
+  }
+  .cform button[type="submit"] {
+    font-family: 'Fraunces', serif;
+    font-size: 0.63rem; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    background: var(--green); color: #FBF8F2;
+    padding: 1rem 2.4rem; border: none; cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: box-shadow 0.3s, filter 0.3s, transform 0.2s;
+  }
+  .cform button[type="submit"]:hover:not(:disabled) {
+    box-shadow: 0 4px 18px rgba(42,37,32,0.22);
+    filter: brightness(1.08); transform: translateY(-2px);
+  }
+  .cform button[type="submit"]:disabled { opacity: 0.55; cursor: default; }
+  .cform-note { font-size: 0.78rem; color: var(--ash); }
+
+  .cform-status { font-size: 0.88rem; line-height: 1.6; display: none; }
+  .cform-status.show { display: block; }
+  .cform-status.ok    { color: #2C6A4E; }
+  .cform-status.error { color: #B4432F; }
+
+  /* honeypot — hidden from people, visible to naive bots */
+  .cf-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  /* --- direct channels --- */
+  .contact-side {
+    border-left: 1px solid var(--border);
+    padding-left: 2.5rem;
+  }
+  @media (max-width: 860px) {
+    .contact-side { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 2.2rem; }
+  }
+  .side-h {
+    font-family: 'Fraunces', serif;
+    font-size: 0.58rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ash); margin-bottom: 1.1rem;
+  }
+  .side-links { display: grid; gap: 0.7rem; margin-bottom: 2.2rem; }
+  .side-link {
+    display: flex; align-items: center; gap: 0.85rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--graphite);
+    background: var(--charcoal);
+    text-decoration: none;
+    color: var(--pure-white);
+    font-size: 0.9rem;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+  .side-link:hover { border-color: var(--ash); transform: translateX(3px); }
+  .side-link svg { flex-shrink: 0; color: var(--ash); }
+  .side-link b { font-weight: 600; }
+  .side-link span { display: block; font-size: 0.74rem; color: var(--ash); margin-top: 1px; }
+
+  .side-list { list-style: none; display: grid; gap: 0.75rem; }
+  .side-list li {
+    font-size: 0.86rem; line-height: 1.55; color: var(--silver);
+    padding-left: 1.15rem; position: relative;
+  }
+  .side-list li::before {
+    content: ''; position: absolute; left: 0; top: 0.55em;
+    width: 5px; height: 5px; background: var(--steel);
+  }
+  .side-list li b { color: var(--pure-white); font-weight: 600; }
+
 </style>
 </head>
 <body>
@@ -1116,7 +1413,8 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
     <li><a href="#services">Services</a></li>
     <li><a href="#clients">Clients</a></li>
     <li><a href="#meet">About</a></li>
-    <li><a href="#hero-chat" class="nav-cta" id="nav-contact-link">Contact</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#contact" class="nav-cta" id="nav-contact-link">Get a quote</a></li>
   </ul>
   <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -1130,7 +1428,8 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   <a href="#services" class="mob-link">Services</a>
   <a href="#clients" class="mob-link">Clients</a>
   <a href="#meet" class="mob-link">About</a>
-  <a href="#hero-chat" class="mob-link mob-cta" id="mob-contact-link">Contact</a>
+  <a href="#contact" class="mob-link">Contact</a>
+  <a href="#contact" class="mob-link mob-cta" id="mob-contact-link">Get a quote</a>
 </div>
 
 <!-- HERO -->
@@ -1348,9 +1647,32 @@ c0.9-1.3,1.4-2.5,1.6-3.6c0.2,0.9,0.9,3.4,3.2,5.5c0.6,0.6,1.2,1,1.8,1.3c2.8,0,5.6
 C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   </div>
   <div class="hero-post-logo" id="hero-post-logo">
+    <h1 class="hero-h1">
+      Photoreal renders and Revit sets for architects
+      <em>and the interior designers and homeowners they build for.</em>
+    </h1>
+
     <p class="hero-desc">
-      3D visualization, CAD, Engineering &amp; Interior Design —<br>delivered with precision, on time, every time.
+      Send us your plans, sketches or a reference image. You get scope and a price
+      back within 24 hours — and drafts you can put in front of your client.
     </p>
+
+    <div class="hero-proof">
+      <span>200+ projects delivered</span>
+      <span>Revit · AutoCAD · SketchUp</span>
+      <span>Working US hours</span>
+    </div>
+
+    <figure class="hero-shot">
+      <img src="images/gr04.webp" width="1600" height="900" fetchpriority="high" decoding="async"
+           alt="Photorealistic 3D rendering of a double-height residential game room and lounge with acoustic ceiling panels, produced by Alien Building Studio">
+      <figcaption>NOVA Knoxville — Game Room · 3D Rendering &amp; Interior Design</figcaption>
+    </figure>
+
+    <div class="hero-btns" style="margin-bottom:2.2rem">
+      <a href="#contact" class="btn-primary" data-cta="hero-quote">Get a quote</a>
+      <a href="#portfolio" class="btn-outline">See the work</a>
+    </div>
 
     <!-- HERO CHAT (moved up so it's the first thing visitors can act on) -->
     <div id="hero-chat">
@@ -1379,9 +1701,6 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
       </div>
     </div>
 
-    <div class="hero-btns">
-      <a href="#portfolio" class="btn-outline">Explore Portfolio</a>
-    </div>
     <div class="scroll-hint">
       <span>Scroll to explore</span>
       <div class="scroll-arrow"></div>
@@ -1560,12 +1879,114 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
 </section>
 
 
+<!-- ===================== CONTACT ===================== -->
+<section id="contact">
+  <div class="section-label reveal">
+    <p class="section-eyebrow">Start a Project</p>
+    <h2 class="section-title">Send Us Your Plans</h2>
+  </div>
+
+  <div class="contact-inner">
+    <div>
+      <p class="contact-lead">
+        Tell us what you're building and roughly when you need it. You'll get scope,
+        a price range and a delivery date back — usually the same working day.
+      </p>
+
+      <form class="cform" id="lead-form" novalidate>
+        <div class="cform-row">
+          <div class="cfield">
+            <label for="cf-name">Your name</label>
+            <input type="text" id="cf-name" name="name" required autocomplete="name" placeholder="Jane Okafor">
+          </div>
+          <div class="cfield">
+            <label for="cf-email">Email</label>
+            <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder="jane@studio.com">
+          </div>
+        </div>
+
+        <div class="cform-row">
+          <div class="cfield">
+            <label for="cf-type">What do you need?</label>
+            <select id="cf-type" name="projectType" required>
+              <option value="">Select one…</option>
+              <option>3D rendering / visualization</option>
+              <option>Revit / BIM model</option>
+              <option>CAD drafting &amp; construction documents</option>
+              <option>Interior design &amp; FF&amp;E</option>
+              <option>As-built / existing conditions</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <div class="cfield">
+            <label for="cf-when">When do you need it?</label>
+            <select id="cf-when" name="timeline">
+              <option value="">Select one…</option>
+              <option>ASAP — rush</option>
+              <option>Within 2 weeks</option>
+              <option>This month</option>
+              <option>Just planning ahead</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cfield">
+          <label for="cf-msg">About the project</label>
+          <textarea id="cf-msg" name="message" required
+            placeholder="Project type and size, what stage you're at, what you need delivered. If you have plans or reference images, paste a Drive/Dropbox link and we'll take it from there."></textarea>
+        </div>
+
+        <!-- bot trap: real people never fill this in -->
+        <div class="cf-hp" aria-hidden="true">
+          <label for="cf-company">Company</label>
+          <input type="text" id="cf-company" name="company" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="cform-submit">
+          <button type="submit" id="cf-submit">Send project details</button>
+          <span class="cform-note">No spam, no mailing list — just a reply.</span>
+        </div>
+
+        <p class="cform-status" id="cf-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <aside class="contact-side">
+      <p class="side-h" id="side-h-direct">Rather talk directly?</p>
+      <div class="side-links">
+        <a class="side-link" id="contact-whatsapp" href="#" target="_blank" rel="noopener" data-cta="whatsapp">
+          <svg width="19" height="19" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+            <path d="M16 2C8.268 2 2 8.268 2 16c0 2.51.663 4.86 1.818 6.895L2 30l7.305-1.796A13.93 13.93 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.5a11.43 11.43 0 0 1-5.845-1.604l-.418-.249-4.332 1.065 1.094-4.212-.272-.433A11.47 11.47 0 0 1 4.5 16C4.5 9.649 9.649 4.5 16 4.5S27.5 9.649 27.5 16 22.351 27.5 16 27.5zm6.29-8.61c-.344-.172-2.04-1.006-2.355-1.12-.316-.115-.545-.172-.775.172-.229.344-.888 1.12-1.088 1.35-.2.229-.4.258-.744.086-.344-.172-1.453-.536-2.767-1.707-1.022-.912-1.712-2.038-1.912-2.382-.2-.344-.021-.53.15-.701.155-.154.344-.4.516-.6.172-.2.229-.344.344-.573.115-.229.057-.43-.029-.602-.086-.172-.775-1.868-1.062-2.558-.28-.672-.563-.58-.775-.591l-.66-.011c-.229 0-.6.086-.916.43-.315.344-1.203 1.177-1.203 2.87 0 1.694 1.232 3.33 1.404 3.559.172.229 2.426 3.706 5.877 5.195.822.355 1.463.567 1.963.726.824.263 1.575.226 2.168.137.661-.099 2.04-.834 2.327-1.638.287-.804.287-1.493.2-1.638-.086-.144-.315-.229-.659-.401z"/>
+          </svg>
+          <span style="color:inherit;margin:0"><b>WhatsApp</b><span>Fastest — usually within the hour</span></span>
+        </a>
+        <a class="side-link" id="contact-email" href="#" data-cta="email">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>
+          </svg>
+          <span style="color:inherit;margin:0"><b>Email</b><span>Best for sending drawing sets</span></span>
+        </a>
+      </div>
+
+      <p class="side-h">What to send us</p>
+      <ul class="side-list">
+        <li><b>Plans or sketches</b> — DWG, RVT, PDF, or a photo of a napkin drawing. All of it works.</li>
+        <li><b>Reference images</b> — the look you're after says more than three paragraphs.</li>
+        <li><b>Your deadline</b> — rush work is possible; it just needs to be said up front.</li>
+        <li><b>Budget range</b> — optional, but it gets you a realistic scope on the first reply instead of the third.</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+
 <footer>
   <div class="footer-copy">© 2026 Alien Building Studio — All Rights Reserved</div>
   <div class="footer-links">
     <a href="#portfolio">Portfolio</a>
     <a href="#services">Services</a>
     <a href="#meet">About</a>
+    <a href="#contact">Contact</a>
   </div>
   <div class="footer-social">
     <a href="https://www.upwork.com/freelancers/johninteriordesign" target="_blank" rel="noopener" aria-label="Upwork" class="social-icon">
@@ -1596,36 +2017,52 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
 ================================================================ */
 const portfolioData = [
   [
-    { label: 'Living Room',               type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E8E0D0 0%,#DDD2BC 50%,#EFE9DC 100%)',    imgs: ['images/01.png', 'images/02.png', 'images/03.png'] },
-    { label: 'AYC Tennis Pro Shop',       type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E4DCC9 0%,#D6CAB0 100%)',                imgs: ['images/ts01.png', 'images/ts02.png', 'images/ts03.png']},    
-    { label: 'Kids Bedroom',              type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E8E0D0 0%,#DCD0BA 100%)',                imgs: ['images/kd01.png', 'images/kd02.png']},       
-    { label: 'NOVA Knoxville Game Room',  type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#EAE2D2 0%,#DAD0B8 100%)',                imgs: ['images/gr01.png', 'images/gr02.png', 'images/gr03.png', 'images/gr04.png']},   
-    { label: 'Flats at Carrs Hill BAR',   type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E6DEC E0%,#D8CDB4 100%)',                imgs: ['images/ch01.png', 'images/ch02.png', 'images/ch03.png']},   
-    { label: 'Kitchen',                   type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E7DFCF 0%,#DACDB3 100%)',                imgs: ['images/k01.png', 'images/k02.png', 'images/k03.png', 'images/k04.png', 'images/k05.png', 'images/k06.png'] },
+    { label: 'ACI Medical Clinic Queens NY',                type: 'Interior Design & 3D Renderings', g: 'linear-gradient(135deg,#EAE3D3 0%,#DACFB6 100%)',     imgs: ['images/clinc01.webp', 'images/clinc02.webp', 'images/clinc03.webp', 'images/clinc04.webp', 'images/clinc05.webp', 'images/clinc06.webp', 'images/clinc07.webp', 'images/clinc08.webp'] },
+    { label: 'Living Room',               type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E8E0D0 0%,#DDD2BC 50%,#EFE9DC 100%)',    imgs: ['images/01.webp', 'images/02.webp', 'images/03.webp'] },
+    { label: 'AYC Tennis Pro Shop',       type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E4DCC9 0%,#D6CAB0 100%)',                imgs: ['images/ts01.webp', 'images/ts02.webp', 'images/ts03.webp']},    
+    { label: 'Kids Bedroom',              type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E8E0D0 0%,#DCD0BA 100%)',                imgs: ['images/kd01.webp', 'images/kd02.webp']},       
+    { label: 'NOVA Knoxville Game Room',  type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#EAE2D2 0%,#DAD0B8 100%)',                imgs: ['images/gr01.webp', 'images/gr02.webp', 'images/gr03.webp', 'images/gr04.webp']},   
+    { label: 'Flats at Carrs Hill BAR',   type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E6DEC E0%,#D8CDB4 100%)',                imgs: ['images/ch01.webp', 'images/ch02.webp', 'images/ch03.webp']},   
+    { label: 'Kitchen',                   type: '3D Renderings & Interior Design',    g: 'linear-gradient(135deg,#E7DFCF 0%,#DACDB3 100%)',                imgs: ['images/k01.webp', 'images/k02.webp', 'images/k03.webp', 'images/k05.webp', 'images/k06.webp'] },
   ],
   [
-    { label: 'Alchemy Beach Waukegan Lake Michigan',          type: '3D Renderings',         g: 'linear-gradient(135deg,#E4DCC9 0%,#D9CDB3 100%)',     imgs: ['images/al01.png', 'images/al02.png', 'images/al03.png'] },
-    { label: 'Exterior Renderings',                            type: '3D Renderings',         g: 'linear-gradient(135deg,#ECE4D5 0%,#DED2B8 100%)',     imgs: ['images/ex01.png', 'images/ex02.png', 'images/ex03.png', 'images/ex04.png' ] },
-    { label: 'Loft Renovation',                                type: 'Interior Design',       g: 'linear-gradient(135deg,#E2D9C5 0%,#EEE7D9 100%)',     imgs: ['images/loft01.png', 'images/loft02.png']},       
-    { label: 'Recreational Room',                              type: 'Interior Design',       g: 'linear-gradient(135deg,#E8E0D0 0%,#D8CCB2 100%)',     imgs: ['images/rr01.png', 'images/rr02.png']},    
-    { label: 'Bathroom',                                       type: '3D Renderings',         g: 'linear-gradient(135deg,#E5DCC8 0%,#D5C9AE 100%)',     imgs: ['images/b01.png', 'images/b02.png', 'images/b03.png', 'images/b04.png', 'images/b05.png']},      
-    { label: 'Mudroom',                                        type: 'Interior Design',       g: 'linear-gradient(135deg,#EAE2D2 0%,#DAD0B8 100%)',     imgs: ['images/md01.png']},       
+    { label: '2004 57 AVE SW LOT 23 & 24 Exteriors',        type: '3D Renderings',         g: 'linear-gradient(135deg,#E7DFCE 0%,#D6CAB0 100%)',     imgs: ['images/ext01.webp', 'images/ext02.webp', 'images/ext03.webp'] },
+    { label: 'Alchemy Beach Waukegan Lake Michigan',          type: '3D Renderings',         g: 'linear-gradient(135deg,#E4DCC9 0%,#D9CDB3 100%)',     imgs: ['images/al01.webp', 'images/al02.webp', 'images/al03.webp'] },
+    { label: 'Exterior Renderings',                            type: '3D Renderings',         g: 'linear-gradient(135deg,#ECE4D5 0%,#DED2B8 100%)',     imgs: ['images/ex01.webp', 'images/ex02.webp', 'images/ex03.webp', 'images/ex04.webp' ] },
+    { label: 'Loft Renovation',                                type: 'Interior Design',       g: 'linear-gradient(135deg,#E2D9C5 0%,#EEE7D9 100%)',     imgs: ['images/loft01.webp', 'images/loft02.webp']},       
+    { label: 'Recreational Room',                              type: 'Interior Design',       g: 'linear-gradient(135deg,#E8E0D0 0%,#D8CCB2 100%)',     imgs: ['images/rr01.webp', 'images/rr02.webp']},    
+    { label: 'Bathroom',                                       type: '3D Renderings',         g: 'linear-gradient(135deg,#E5DCC8 0%,#D5C9AE 100%)',     imgs: ['images/b01.webp', 'images/b02.webp', 'images/b03.webp', 'images/b04.webp', 'images/b05.webp']},      
+    { label: 'Mudroom',                                        type: 'Interior Design',       g: 'linear-gradient(135deg,#EAE2D2 0%,#DAD0B8 100%)',     imgs: ['images/md01.webp']},       
   ],
   [
-    { label: '3D Floor Plans',                type: '3D Visualization',         g: 'linear-gradient(135deg,#E8E0D0 0%,#DBCFB5 100%)',            imgs: ['images/3d01.png', 'images/3d02.png', 'images/3d03.png', 'images/3d04.png'] },
-    { label: 'Architectural Drawings',        type: 'CAD Drafting',             g: 'linear-gradient(135deg,#E4DCC9 0%,#D9CDB3 100%)',            imgs: ['images/ad01.png', 'images/ad02.png', 'images/ad03.png', 'images/ad04.png', 'images/ad05.png'] },
-    { label: 'AutoCAD',                       type: 'CAD Drafting',             g: 'linear-gradient(135deg,#E7E0D1 0%,#D9CEB5 100%)',            imgs: ['images/c01.png', 'images/c02.png', 'images/c03.png', 'images/c04.png', 'images/c05.png', 'images/c06.png' ] },
-    { label: 'Marketing Plans',               type: 'CAD Drafting',             g: 'linear-gradient(135deg,#E9E1D1 0%,#DBD0B7 100%)',            imgs: ['images/m01.png', 'images/m02.png', 'images/m03.png', 'images/m04.png'] },
-    { label: '3D Revit',                      type: 'BIM',                      g: 'linear-gradient(135deg,#E5DCC8 0%,#D7CBB1 100%)',            imgs: ['images/rv01.png', 'images/rv02.png', 'images/rv03.png', 'images/rv04.png', 'images/rv05.png'] },
-    { label: 'Construction Documents',        type: 'BIM',                      g: 'linear-gradient(135deg,#E6DEC9 0%,#D7CBB0 100%)',            imgs: ['images/rd01.png', 'images/rd02.png', 'images/rd03.png', 'images/rd04.png', 'images/rd05.png'] },    
+    { label: '3D Floor Plans',                type: '3D Visualization',         g: 'linear-gradient(135deg,#E8E0D0 0%,#DBCFB5 100%)',            imgs: ['images/3d01.webp', 'images/3d02.webp', 'images/3d03.webp', 'images/3d04.webp'] },
+    { label: 'Architectural Drawings',        type: 'CAD Drafting',             g: 'linear-gradient(135deg,#E4DCC9 0%,#D9CDB3 100%)',            imgs: ['images/ad01.webp', 'images/ad02.webp', 'images/ad03.webp', 'images/ad04.webp', 'images/ad05.webp'] },
+    { label: 'AutoCAD',                       type: 'CAD Drafting',             g: 'linear-gradient(135deg,#E7E0D1 0%,#D9CEB5 100%)',            imgs: ['images/c01.webp', 'images/c02.webp', 'images/c03.webp', 'images/c04.webp', 'images/c05.webp', 'images/c06.webp' ] },
+    { label: 'Marketing Plans',               type: 'CAD Drafting',             g: 'linear-gradient(135deg,#E9E1D1 0%,#DBD0B7 100%)',            imgs: ['images/m01.webp', 'images/m02.webp', 'images/m03.webp', 'images/m04.webp'] },
+    { label: '3D Revit',                      type: 'BIM',                      g: 'linear-gradient(135deg,#E5DCC8 0%,#D7CBB1 100%)',            imgs: ['images/rv01.webp', 'images/rv02.webp', 'images/rv03.webp', 'images/rv04.webp', 'images/rv05.webp'] },
+    { label: 'Construction Documents',        type: 'BIM',                      g: 'linear-gradient(135deg,#E6DEC9 0%,#D7CBB0 100%)',            imgs: ['images/rd01.webp', 'images/rd02.webp', 'images/rd03.webp', 'images/rd04.webp', 'images/rd05.webp'] },    
   ]
 ];
 
-function buildCard(item) {
+function escAttr(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function buildCard(item, cardIdx, eagerRow) {
   const imgs = item.imgs || [];
-  const layers = imgs.map((src, i) =>
-    `<div class="card-img-layer${i === 0 ? ' active' : ''}" style="background-image:url('${src}')"></div>`
-  ).join('');
+  const layers = imgs.map((src, i) => {
+    // First image of the first two cards in the first strip carries the LCP —
+    // load it eagerly; everything else waits until it is near the viewport.
+    const eager = eagerRow && cardIdx < 2 && i === 0;
+    const alt = escAttr(`${item.label} — ${item.type} by Alien Building Studio`);
+    // Only the first frame of each card gets a real src. The rest carry data-src
+    // and are fetched just before the card cycles to them, so a page-load pulls
+    // one image per card instead of six.
+    const srcAttr = i === 0 ? `src="${src}"` : `data-src="${src}"`;
+    return `<img class="card-img-layer${i === 0 ? ' active' : ''}" ${srcAttr} alt="${i === 0 ? alt : ''}"`
+      + ` width="1600" height="1067" decoding="async"`
+      + ` loading="${eager ? 'eager' : 'lazy'}"${eager ? ' fetchpriority="high"' : ''}>`;
+  }).join('');
 
   // Conditionally render the placeholder icon and label 
   // only if an icon is provided (which means there are no images)
@@ -1651,7 +2088,8 @@ function buildCard(item) {
 
 function populateStrip(id, rowIdx) {
   const el = document.getElementById(id);
-  el.innerHTML = [...portfolioData[rowIdx], ...portfolioData[rowIdx]].map(buildCard).join('');
+  const items = [...portfolioData[rowIdx], ...portfolioData[rowIdx]];
+  el.innerHTML = items.map((item, i) => buildCard(item, i, rowIdx === 0)).join('');
 }
 populateStrip('strip-1', 0);
 populateStrip('strip-2', 1);
@@ -1741,11 +2179,17 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     const layers = Array.from(card.querySelectorAll('.card-img-layer'));
     if (layers.length < 2) return;
 
+    // Fetch a frame only when we're about to need it.
+    function hydrate(l) {
+      if (l && !l.src && l.dataset.src) { l.src = l.dataset.src; delete l.dataset.src; }
+    }
+
     // Stagger start: each card begins on a different image
     const startIdx = Math.floor(Math.random() * layers.length);
+    hydrate(layers[startIdx]);
     layers.forEach((l, i) => l.classList.toggle('active', i === startIdx));
 
-    const entry = { layers, idx: startIdx, hovered: false };
+    const entry = { layers, idx: startIdx, hovered: false, hydrate };
 
     card.addEventListener('mouseenter', () => { entry.hovered = true; });
     card.addEventListener('mouseleave', () => { entry.hovered = false; });
@@ -1755,9 +2199,13 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     const initialDelay = Math.random() * 5000;
     setTimeout(function tick() {
       if (!entry.hovered) {
+        const next = (entry.idx + 1) % entry.layers.length;
+        entry.hydrate(entry.layers[next]);
         entry.layers[entry.idx].classList.remove('active');
-        entry.idx = (entry.idx + 1) % entry.layers.length;
+        entry.idx = next;
         entry.layers[entry.idx].classList.add('active');
+        // Warm the one after next so the cross-fade never shows a blank frame.
+        entry.hydrate(entry.layers[(next + 1) % entry.layers.length]);
       }
       // Re-schedule with a fresh random interval
       setTimeout(tick, 5000 + Math.random() * 2000);
@@ -1807,6 +2255,17 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
 
 <script>
   window.ALIEN_CHAT_URL = 'https://alien-building-chat-production.up.railway.app';
+
+  /* ============================================================
+     CONTACT DETAILS — ⚠️ FILL THESE IN
+     WhatsApp must be digits only, with country code, no + or spaces.
+     Any field left empty simply hides its button (nothing looks broken).
+     ============================================================ */
+  window.ALIEN_CONTACT = {
+    whatsapp: '',                 // ⚠️ STILL EMPTY — add your number, digits only + country code
+    email:    'johnuoloads13@gmail.com',
+    whatsappText: "Hi! I found alienbuilding.com and I'd like to talk about a project."
+  };
 </script>
 
 <!-- LOGO INTRO COLLAPSE ANIMATION -->
@@ -1938,14 +2397,9 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     if (!text || isTyping) return;
     showThread();
     addBubble(text, 'user');
-    // Fire conversion tracking safely — never let it block or break the chat
-    try {
-      if (typeof gtag_report_conversion === 'function') {
-        gtag_report_conversion();
-      }
-    } catch (e) {
-      console.warn('gtag conversion tracking failed (non-fatal):', e);
-    }
+    // Engagement only. The real conversion fires below, once the backend
+    // says the lead is actually qualified.
+    abTrack('lead_started', { method: 'chat' });
     isTyping = true; showTyping();
     try {
       const res  = await fetch(BACKEND_URL + '/chat', {
@@ -1956,9 +2410,11 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
       const data = await res.json();
       removeTyping();
       addBubble(data.reply || "Sorry, something went wrong. Please try again.", 'agent');
+      // Backend flags the moment it has everything John needs — that's the conversion.
+      if (data.leadReady) abLead('chat');
     } catch(e) {
       removeTyping();
-      addBubble("Connection issue. Please try again in a moment.", 'agent');
+      addBubble("Connection issue — you can also use the form below, or WhatsApp us directly.", 'agent');
     }
     isTyping = false;
     startPolling();
@@ -1997,7 +2453,7 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     }, 600);
   }
 
-  ['btn-start-chat', 'nav-contact-link', 'mob-contact-link'].forEach(id => {
+  ['btn-start-chat'].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener('click', function(e) {
@@ -2032,6 +2488,113 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
       } catch(_) {}
     }, 3000);
   }
+})();
+</script>
+
+
+<!-- ===================== CONTACT LINKS + LEAD FORM ===================== -->
+<script>
+(function () {
+  var C = window.ALIEN_CONTACT || {};
+
+  /* ---- WhatsApp + email links, wired from one config block ---- */
+  var waHref = C.whatsapp
+    ? 'https://wa.me/' + String(C.whatsapp).replace(/\D/g, '') +
+      '?text=' + encodeURIComponent(C.whatsappText || 'Hi!')
+    : null;
+  var mailHref = C.email ? 'mailto:' + C.email + '?subject=' + encodeURIComponent('Project enquiry via alienbuilding.com') : null;
+
+  ['contact-whatsapp', 'footer-whatsapp'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (waHref) { el.href = waHref; }
+    else { el.remove(); }        // no number configured — hide rather than link to nowhere
+  });
+
+  var emailEl = document.getElementById('contact-email');
+  if (emailEl) {
+    if (mailHref) { emailEl.href = mailHref; emailEl.removeAttribute('target'); }
+    else { emailEl.remove(); }
+  }
+
+  // Nothing configured yet? Drop the whole block rather than leave a bare heading.
+  if (!waHref && !mailHref) {
+    ['side-h-direct'].forEach(function (id) {
+      var el = document.getElementById(id); if (el) el.remove();
+    });
+    document.querySelectorAll('#contact .side-links').forEach(function (el) { el.remove(); });
+  }
+
+  document.querySelectorAll('[data-cta="whatsapp"], [data-cta="email"]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      abTrack('lead_started', { method: el.getAttribute('data-cta') });
+    });
+  });
+
+  /* ---- Lead form ---- */
+  var form   = document.getElementById('lead-form');
+  if (!form) return;
+  var btn    = document.getElementById('cf-submit');
+  var status = document.getElementById('cf-status');
+  var sent   = false;
+
+  function say(msg, kind) {
+    status.textContent = msg;
+    status.className = 'cform-status show ' + kind;
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (sent) return;
+
+    // Bot trap — silently accept and do nothing.
+    if (form.company && form.company.value) { say('Thanks — we’ll be in touch.', 'ok'); return; }
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      say('Please fill in your name, email and a short description.', 'error');
+      return;
+    }
+
+    var payload = {
+      name:        form.name.value.trim(),
+      email:       form.email.value.trim(),
+      projectType: form.projectType.value,
+      timeline:    form.timeline.value,
+      message:     form.message.value.trim(),
+      page:        location.href,
+      referrer:    document.referrer || '',
+      source:      'website-form'
+    };
+
+    btn.disabled = true;
+    var original = btn.textContent;
+    btn.textContent = 'Sending…';
+    say('', '');
+
+    try {
+      var res = await fetch((window.ALIEN_CHAT_URL || '') + '/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      sent = true;
+      form.querySelectorAll('input, select, textarea, button').forEach(function (el) { el.disabled = true; });
+      btn.textContent = 'Sent';
+      say('Got it, ' + payload.name.split(' ')[0] + ' — your details are through. You’ll hear back within one working day, usually much sooner.', 'ok');
+      abLead('form');
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = original;
+      var fallback = C.email
+        ? ' Please email us directly at ' + C.email + ' and we’ll pick it up straight away.'
+        : ' Please try WhatsApp, or send the details through the chat at the top of the page.';
+      say('That didn’t send —' + fallback, 'error');
+    }
+  });
 })();
 </script>
 </body>
