@@ -77,8 +77,8 @@ function gtag_report_conversion(url) {
 <link rel="shortcut icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" type="image/svg+xml" href="favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D Rendering &amp; Revit Drafting for Architects | Alien Building</title>
-<meta name="description" content="Photoreal 3D renderings, Revit/BIM models and CAD sets for architects, interior designers and homeowners. 200+ projects delivered. Send your plans and get scope and pricing back within 24 hours.">
+<title>Mood Board to 3D Render for Interior Design Firms | Alien Building</title>
+<meta name="description" content="White-label 3D rendering, Revit model updates and drafting support for interior design firms. Send your mood board and floor plan — client-ready renders back in five working days, from $350 per image.">
 <link rel="canonical" href="https://alienbuilding.com/">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#F5F1E8">
@@ -90,15 +90,15 @@ function gtag_report_conversion(url) {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Alien Building Studio">
 <meta property="og:url" content="https://alienbuilding.com/">
-<meta property="og:title" content="3D Rendering &amp; Revit Drafting for Architects | Alien Building">
-<meta property="og:description" content="Photoreal 3D renderings, Revit/BIM models and CAD sets for architects, interior designers and homeowners. Send your plans, get scope and pricing back in 24 hours.">
+<meta property="og:title" content="Mood Board to 3D Render for Interior Design Firms | Alien Building">
+<meta property="og:description" content="White-label 3D rendering, Revit updates and drafting support for interior design firms. Mood board in, client-ready renders out in five working days.">
 <meta property="og:image" content="https://alienbuilding.com/images/og-cover.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Photorealistic interior rendering of a living room by Alien Building Studio">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="3D Rendering &amp; Revit Drafting for Architects | Alien Building">
-<meta name="twitter:description" content="Photoreal 3D renderings, Revit/BIM models and CAD sets. Send your plans, get scope and pricing back in 24 hours.">
+<meta name="twitter:title" content="Mood Board to 3D Render for Interior Design Firms | Alien Building">
+<meta name="twitter:description" content="White-label 3D rendering and Revit support for interior design firms. Mood board in, client-ready renders out in five working days.">
 <meta name="twitter:image" content="https://alienbuilding.com/images/og-cover.jpg">
 
 <!-- Structured data -->
@@ -573,7 +573,10 @@ function gtag_report_conversion(url) {
     border-color: rgba(42,37,32,0.20);
     box-shadow: 0 8px 40px rgba(42,37,32,0.05);
   }
-  .client-icon { font-size: 2.2rem; margin-bottom: 1.2rem; display: block; }
+  .client-icon {
+    display: block; margin-bottom: 1.2rem; color: var(--ash);
+    line-height: 0;
+  }
   .client-title {
     font-family: 'Fraunces', serif; font-size: 0.72rem; font-weight: 700;
     letter-spacing: 0.18em; text-transform: uppercase;
@@ -1060,6 +1063,43 @@ function gtag_report_conversion(url) {
   /* ===================== STRIP DRAG CURSOR ===================== */
   .strip-wrapper { cursor: grab; }
   .strip-wrapper.dragging { cursor: grabbing; }
+  /* ============================================================
+     HOW IT WORKS — the buying process
+     ============================================================ */
+  #process { padding: 5rem 2rem 5.5rem; }
+  .process-grid {
+    max-width: 1080px; margin: 0 auto 2.6rem;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border);
+  }
+  @media (max-width: 900px) { .process-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .process-grid { grid-template-columns: 1fr; } #process { padding: 3.5rem 1.25rem 4rem; } }
+
+  .step { background: var(--charcoal); padding: 1.6rem 1.4rem 1.75rem; }
+  .step-n {
+    font-family: 'Fraunces', serif; font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 0.2em; color: var(--steel); display: block; margin-bottom: 0.9rem;
+  }
+  .step-t {
+    font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600;
+    color: var(--pure-white); margin-bottom: 0.5rem; line-height: 1.25;
+  }
+  .step-d { font-size: 0.85rem; line-height: 1.65; color: var(--ash); }
+
+  .process-price {
+    max-width: 1080px; margin: 0 auto;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem 2.4rem;
+    border-top: 1px solid var(--border); padding-top: 1.5rem;
+  }
+  .price-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .price-k {
+    font-family: 'Fraunces', serif; font-size: 0.56rem; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--steel);
+  }
+  .price-v { font-family: 'Fraunces', serif; font-size: 1.05rem; color: var(--pure-white); font-weight: 600; }
+  .price-note { font-size: 0.82rem; color: var(--ash); max-width: 34ch; line-height: 1.55; margin-left: auto; }
+
   /* ============================================================
      CONTACT — form + direct channels
      ============================================================ */
@@ -1648,17 +1688,18 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
   </div>
   <div class="hero-post-logo" id="hero-post-logo">
     <h1 class="hero-h1">
-      Photoreal renders and Revit sets for architects
-      <em>and the interior designers and homeowners they build for.</em>
+      Your mood&nbsp;board, rendered
+      <em>Client-ready visuals and Revit support for interior design firms.</em>
     </h1>
 
     <p class="hero-desc">
-      Send us your plans, sketches or a reference image. You get scope and a price
-      back within 24 hours — and drafts you can put in front of your client.
+      Send the mood board and a floor plan. Get renders your client can approve —
+      in five working days, revisions included, presented under your studio's name.
     </p>
 
     <div class="hero-proof">
       <span>200+ projects delivered</span>
+      <span>White-label — it stays your work</span>
       <span>Revit · AutoCAD · SketchUp</span>
       <span>Working US hours</span>
     </div>
@@ -1722,79 +1763,117 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
 <!-- SERVICES -->
 <section id="services">
   <div class="section-label reveal">
-    <p class="section-eyebrow">What We Deliver</p>
-    <h2 class="section-title">Our Services</h2>
+    <p class="section-eyebrow">Built for design studios</p>
+    <h2 class="section-title">What We Take Off Your Desk</h2>
   </div>
   <div class="services-grid">
     <div class="service-card reveal">
       <div class="service-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 7l10-5 10 5-10 5z"/><path d="M2 12l10 5 10-5"/><path d="M2 17l10 5 10-5"/>
         </svg>
       </div>
-      <div class="service-title">3D Visualization</div>
-      <p class="service-desc">Photorealistic renders and immersive walkthroughs that reveal your vision before a single stone is placed.</p>
-      <div class="service-tags"><span class="tag">Renders</span><span class="tag">Walkthroughs</span><span class="tag">VR</span></div>
+      <div class="service-title">Mood Board → Render</div>
+      <p class="service-desc">Send the board, a floor plan and your FF&amp;E picks. You get photoreal images your client can sign off on — not a concept sketch you still have to explain.</p>
+      <div class="service-tags"><span class="tag">5-day turnaround</span><span class="tag">2 revisions incl.</span><span class="tag">From $350/image</span></div>
     </div>
     <div class="service-card reveal">
       <div class="service-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <line x1="2" y1="20" x2="22" y2="20"/><line x1="5" y1="20" x2="5" y2="9"/>
-          <line x1="19" y1="20" x2="19" y2="9"/><polyline points="1 9 12 2 23 9"/>
-          <rect x="9" y="14" width="6" height="6"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
         </svg>
       </div>
-      <div class="service-title">CAD Drafting</div>
-      <p class="service-desc">Precision 2D and 3D CAD — floor plans, sections, elevations, and construction documents built to exacting standards.</p>
-      <div class="service-tags"><span class="tag">AutoCAD</span><span class="tag">Revit</span><span class="tag">BIM</span></div>
+      <div class="service-title">Revit Model Updates</div>
+      <p class="service-desc">You send the change; the model comes back updated and clean. Layouts, ceilings, joinery, finishes — without you opening Revit at 11pm.</p>
+      <div class="service-tags"><span class="tag">Revit</span><span class="tag">Family creation</span><span class="tag">Sheet sets</span></div>
     </div>
     <div class="service-card reveal">
       <div class="service-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="10" x2="9" y2="20"/>
         </svg>
       </div>
-      <div class="service-title">Architectural Design</div>
-      <p class="service-desc">Full architectural solutions from schematic design through permit-ready construction documents for residential and commercial projects.</p>
-      <div class="service-tags"><span class="tag">Concept</span><span class="tag">Permitting</span><span class="tag">As-Builts</span></div>
+      <div class="service-title">Space Planning &amp; FF&amp;E</div>
+      <p class="service-desc">Furniture layouts, elevations and FF&amp;E schedules drawn to your spec and formatted the way your studio already documents.</p>
+      <div class="service-tags"><span class="tag">Layouts</span><span class="tag">Schedules</span><span class="tag">Elevations</span></div>
     </div>
     <div class="service-card reveal">
       <div class="service-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/>
-          <line x1="12" y1="18" x2="12" y2="22"/>
-          <line x1="4.22" y1="4.22" x2="7.05" y2="7.05"/>
-          <line x1="16.95" y1="16.95" x2="19.78" y2="19.78"/>
-          <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
         </svg>
       </div>
-      <div class="service-title">Interior Design</div>
-      <p class="service-desc">Space planning, materials, lighting, and full 3D interior visualization — environments that transcend the ordinary.</p>
-      <div class="service-tags"><span class="tag">Space Planning</span><span class="tag">FF&amp;E</span><span class="tag">Mood Boards</span></div>
+      <div class="service-title">Client Presentation Sets</div>
+      <p class="service-desc">Renders, plans and finish boards assembled into a deck your client actually understands — under your branding, never mine.</p>
+      <div class="service-tags"><span class="tag">White-label</span><span class="tag">Boards</span><span class="tag">PDF sets</span></div>
     </div>
     <div class="service-card reveal">
       <div class="service-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="2" y1="20" x2="22" y2="20"/><line x1="5" y1="20" x2="5" y2="9"/><line x1="19" y1="20" x2="19" y2="9"/><polyline points="1 9 12 2 23 9"/><rect x="9" y="14" width="6" height="6"/>
         </svg>
       </div>
-      <div class="service-title">BIM Solutions</div>
-      <p class="service-desc">Full Building Information Modelling — from concept to construction. Clash detection, coordination models, and data-rich deliverables.</p>
-      <div class="service-tags"><span class="tag">Revit</span><span class="tag">Navisworks</span><span class="tag">IFC</span></div>
+      <div class="service-title">CAD Drafting &amp; As-Builts</div>
+      <p class="service-desc">Redlines to clean drawings, site photos to as-builts, PDF plans to editable CAD. The production work that eats your billable hours.</p>
+      <div class="service-tags"><span class="tag">AutoCAD</span><span class="tag">As-builts</span><span class="tag">PDF→DWG</span></div>
     </div>
     <div class="service-card reveal">
       <div class="service-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>
         </svg>
       </div>
-      <div class="service-title">Fast-Track Delivery</div>
-      <p class="service-desc">Rush turnarounds without compromise. Our entire workflow is built around your deadline — on time, every time, guaranteed.</p>
-      <div class="service-tags"><span class="tag">48hr Rush</span><span class="tag">Revisions Incl.</span></div>
+      <div class="service-title">Overflow Drafting Support</div>
+      <p class="service-desc">Booked solid or short-staffed? Hand over a block of hours each month and treat it as capacity you can switch on without hiring.</p>
+      <div class="service-tags"><span class="tag">Monthly retainer</span><span class="tag">Your file standards</span><span class="tag">US hours</span></div>
     </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="process">
+  <div class="section-label reveal">
+    <p class="section-eyebrow">How it works</p>
+    <h2 class="section-title">Four Steps, One Price</h2>
+  </div>
+
+  <div class="process-grid reveal">
+    <div class="step">
+      <span class="step-n">STEP 01</span>
+      <div class="step-t">Send the brief</div>
+      <p class="step-d">Mood board, floor plan, FF&amp;E picks, deadline. Whatever you have — a photo of a marked-up print is fine.</p>
+    </div>
+    <div class="step">
+      <span class="step-n">STEP 02</span>
+      <div class="step-t">Fixed quote in 24 hours</div>
+      <p class="step-d">Scope, price and a delivery date. One number you can put straight into your client proposal — no hourly surprises.</p>
+    </div>
+    <div class="step">
+      <span class="step-n">STEP 03</span>
+      <div class="step-t">Draft for review</div>
+      <p class="step-d">First renders in five working days. Two revision rounds are included, so the notes you get from your client are already covered.</p>
+    </div>
+    <div class="step">
+      <span class="step-n">STEP 04</span>
+      <div class="step-t">Final files</div>
+      <p class="step-d">Full-resolution images and source files, presented under your studio's name. What you do with them is your business.</p>
+    </div>
+  </div>
+
+  <div class="process-price reveal">
+    <div class="price-item">
+      <span class="price-k">Renders</span>
+      <span class="price-v">From $350 per image</span>
+    </div>
+    <div class="price-item">
+      <span class="price-k">Revit &amp; drafting</span>
+      <span class="price-v">Quoted per package</span>
+    </div>
+    <div class="price-item">
+      <span class="price-k">Ongoing support</span>
+      <span class="price-v">Monthly retainer</span>
+    </div>
+    <p class="price-note">Priced per deliverable, not per hour — so a fast turnaround costs you less, not more.</p>
   </div>
 </section>
 
@@ -1810,24 +1889,24 @@ C719.9,480.7,721.3,479.7,722.4,478.2z"/></svg>
 <!-- WHO WE SERVE -->
 <section id="clients">
   <div class="section-label reveal">
-    <p class="section-eyebrow">Built For</p>
-    <h2 class="section-title">Who We Serve</h2>
+    <p class="section-eyebrow">Who this is for</p>
+    <h2 class="section-title">Studios We Work With</h2>
   </div>
   <div class="clients-grid">
     <div class="client-card reveal">
-      <span class="client-icon">🏛️</span>
-      <div class="client-title">Architects</div>
-      <p class="client-desc">We become an extension of your team — handling CAD production, 3D modeling, and rendering so you can focus on vision and client relationships.</p>
+      <span class="client-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><rect x="10" y="13" width="4" height="8"/><line x1="9" y1="9" x2="9" y2="9.01"/><line x1="15" y1="9" x2="15" y2="9.01"/></svg></span>
+      <div class="client-title">Interior Design Firms</div>
+      <p class="client-desc">The reason this studio exists. You win the client on taste; we handle the renders, the Revit updates and the drawing sets behind them — under your name, on your deadline.</p>
     </div>
     <div class="client-card reveal">
-      <span class="client-icon">🛋️</span>
-      <div class="client-title">Interior Designers</div>
-      <p class="client-desc">Photorealistic interior renders, space planning drawings, and FF&E schedules delivered on your timeline — ready for client presentations.</p>
+      <span class="client-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M6 21V6l6-3 6 3v15"/><line x1="9" y1="8" x2="9" y2="8.01"/><line x1="15" y1="8" x2="15" y2="8.01"/><line x1="9" y1="12" x2="9" y2="12.01"/><line x1="15" y1="12" x2="15" y2="12.01"/></svg></span>
+      <div class="client-title">Architecture Studios</div>
+      <p class="client-desc">Overflow CAD production, BIM modelling and competition visuals. We plug into your file standards rather than asking you to adapt to ours.</p>
     </div>
     <div class="client-card reveal">
-      <span class="client-icon">🏡</span>
-      <div class="client-title">Homeowners</div>
-      <p class="client-desc">See your dream home before construction begins. We translate your vision into stunning 3D visuals and permit-ready drawings at competitive rates.</p>
+      <span class="client-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20"/><rect x="4" y="9" width="6" height="11"/><rect x="14" y="4" width="6" height="16"/><line x1="7" y1="13" x2="7" y2="13.01"/><line x1="17" y1="8" x2="17" y2="8.01"/><line x1="17" y1="13" x2="17" y2="13.01"/></svg></span>
+      <div class="client-title">Developers &amp; Builders</div>
+      <p class="client-desc">Marketing renders for pre-sales, unit-type visuals and as-built documentation — produced fast enough to keep a sales launch on schedule.</p>
     </div>
   </div>
 </section>
