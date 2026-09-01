@@ -2264,7 +2264,13 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
   window.ALIEN_CONTACT = {
     whatsapp: '',                 // ⚠️ STILL EMPTY — add your number, digits only + country code
     email:    'johnuoloads13@gmail.com',
-    whatsappText: "Hi! I found alienbuilding.com and I'd like to talk about a project."
+    whatsappText: "Hi! I found alienbuilding.com and I'd like to talk about a project.",
+
+    // Where the contact form delivers. FormSubmit emails it straight to the
+    // address above — no server involved. The very first submission triggers a
+    // one-time confirmation email; click the link in it and every submission
+    // after that arrives in the inbox automatically.
+    formEndpoint: 'https://formsubmit.co/ajax/johnuoloads13@gmail.com'
   };
 </script>
 
@@ -2556,15 +2562,18 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
       return;
     }
 
+    var name = form.name.value.trim();
     var payload = {
-      name:        form.name.value.trim(),
-      email:       form.email.value.trim(),
-      projectType: form.projectType.value,
-      timeline:    form.timeline.value,
-      message:     form.message.value.trim(),
-      page:        location.href,
-      referrer:    document.referrer || '',
-      source:      'website-form'
+      _subject:  'New project enquiry from ' + name + ' — alienbuilding.com',
+      _template: 'table',
+      _captcha:  'false',
+      Name:      name,
+      Email:     form.email.value.trim(),
+      'Needs':    form.projectType.value || 'not specified',
+      'Timeline': form.timeline.value || 'not specified',
+      'Project':  form.message.value.trim(),
+      'Sent from': location.href,
+      'Referrer':  document.referrer || 'direct'
     };
 
     btn.disabled = true;
@@ -2573,9 +2582,9 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
     say('', '');
 
     try {
-      var res = await fetch((window.ALIEN_CHAT_URL || '') + '/lead', {
+      var res = await fetch(C.formEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -2583,7 +2592,7 @@ document.querySelectorAll('[data-count]').forEach(el => cntObs.observe(el));
       sent = true;
       form.querySelectorAll('input, select, textarea, button').forEach(function (el) { el.disabled = true; });
       btn.textContent = 'Sent';
-      say('Got it, ' + payload.name.split(' ')[0] + ' — your details are through. You’ll hear back within one working day, usually much sooner.', 'ok');
+      say('Got it, ' + name.split(' ')[0] + ' — your details are through. You’ll hear back within one working day, usually much sooner.', 'ok');
       abLead('form');
 
     } catch (err) {
